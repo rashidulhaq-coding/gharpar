@@ -1,0 +1,63 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<header>
+  <!-- Sidebar -->
+  {% include "partials/sidebar.html" %}
+  <!-- Navbar -->
+  {% include "partials/navbar.html" %}
+<style>
+.row{
+margin-left:  240px;
+}
+.bg-image{
+  height: 250px;
+}
+.bg-image img{
+  height: 250px;
+  width: 100%;
+  object-fit: cover;
+}
+@media (max-width: 991.98px) {
+  .row {
+    margin-left: 0;
+  }
+}
+
+</style>
+</header>
+
+
+<div class="container-fluid">
+  <section class="row mt-5 pt-4" style="">
+  
+<a class="my-1 btn" href="{% url 'admin_category_create'%}">Create Category</a>
+{% for category in categories %}
+  <div class='col-md-3 col-sm-4 col-12'>
+    <div class="card booking-card v-2 mt-2 mb-4 rounded-bottom">
+      <div class="bg-image hover-overlay ripple ripple-surface ripple-surface-light" data-mdb-ripple-color="light">
+        <img src="{{category.image.url}}" class="img-fluid w-100">
+        <a href="{% url 'admin_service_view' category.id %}">
+          <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+        </a>
+      </div>
+      <div class="card-body">
+        <h4 class="card-title font-weight-bold"><a>{{category.name}}</a></h4>
+        {% if category.description %}
+        <p class="card-text">{{category.description}}.</p>
+        {% endif %}
+        <div class="d-flex justify-content-between">
+      <a href="{% url 'admin_service_view' category.id %}" class="btn btn-primary">View</a>
+      <a href="{% url 'admin_category_edit' category.id %}" class="btn">Edit</a>
+      <a href="{% url 'admin_category_delete' category.id %}" class="btn btn-danger">Delete</a>
+      </div>
+      </div>
+      
+        
+
+    </div>
+    </div>
+
+  {% endfor %}
+  </section>
+</div>
+
+{% endblock content %}

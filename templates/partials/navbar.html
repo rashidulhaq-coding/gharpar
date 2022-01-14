@@ -1,0 +1,88 @@
+<style>
+    .bell{
+        font-size: 25px !important;
+    }
+    @media screen and (max-width: 1000px) {
+        
+        .nav-link {
+            display : block;
+            margin-left: 10px;
+        }
+        .m3{
+            margin: 0px;
+        }
+    }
+</style>
+
+
+<nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <!-- Container wrapper -->
+    <div class="container-fluid">
+    {% if request.user.is_authenticated %}
+        {% if request.user.is_superuser %}
+        
+        <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#sidebarMenu"
+            aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+        {% endif %}
+{% endif %}
+        <!-- Brand -->
+        <a class="navbar-brand" href="#">
+            <h4 class="mx-4 my-2 m3"><b>Fashion Salon</b></h4>
+        </a> 
+
+        <!-- Right links -->
+
+        <ul class="navbar-nav ms-auto d-flex flex-row">
+            <!-- Notification dropdown -->
+            {% if request.user.is_authenticated %}
+            <li class="nav-item dropdown bell">
+                <a class="nav-link me-3 me-lg-0 dropdown-toggle hidden-arrow" href="#" id="navbarDropdownMenuLink"
+                    role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+                    
+                    <i class="far fa-bell"></i>
+                    <span class="badge rounded-pill badge-notification bg-danger">1</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                    <li><a class="dropdown-item" href="#">Some news</a></li>
+                    <li><a class="dropdown-item" href="#">Another news</a></li>
+                    <li>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown bell">
+                <a class="nav-link  dropdown-toggle hidden-arrow d-flex align-items-center" href="#" id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+                    {% comment %} <img src='{{request.user.image.url}}' class="rounded-circle"
+                        height="30" width="30" alt="" loading="lazy" /> {% endcomment %}
+                        {% comment %} {{request.user.image}} {% endcomment %}
+                        Profile
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                    <li><a class="dropdown-item" href="{% url 'user_update' %}">Edit profile</a></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </li>
+            
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">Services</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">Packages</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>
+            {% endif %}
+
+
+            <!-- Avatar -->
+        </ul>
+    </div>
+    <!-- Container wrapper -->
+</nav>

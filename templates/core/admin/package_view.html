@@ -1,0 +1,70 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<header>
+  <!-- Sidebar -->
+  {% include "partials/sidebar.html" %}
+  <!-- Navbar -->
+  {% include "partials/navbar.html" %}
+<style>
+.row{
+margin-left:  240px;
+}
+.bg-image{
+  height: 250px;
+}
+.bg-image img{
+  height: 250px;
+  width: 100%;
+  object-fit: cover;
+}
+@media (max-width: 991.98px) {
+  .row {
+    margin-left: 0;
+  }
+}
+</style>
+</header>
+
+
+<div class="container-fluid">
+  <section class="row mt-5 pt-4" style="">
+  
+<a class="my-1 btn" href="{% url 'admin_package_create' %}">Create package</a>
+{% for package in packages %}
+  <div class='col-md-3 col-sm-4 col-12'>
+    <div class="card booking-card v-2 mt-2 mb-4 rounded-bottom">
+      <div class="bg-image hover-overlay ripple ripple-surface ripple-surface-light" data-mdb-ripple-color="light">
+       <img src="{{package.image.url}}" class="img-fluid w-100">
+        <a href="#!">
+          <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+        </a>
+      </div>
+      <div class="card-body">
+        <h4 class="card-title font-weight-bold"><a>{{package.name}}</a></h4>
+       
+        <p class="card-text">{{package.descriptionn}}.</p>
+        <ul class="list-unstyled d-flex justify-content-between align-items-center mb-0">
+          <li>Price</li>
+          <li>
+            <div class="chip ms-3">{{package.price}}</div>
+          </li>
+        </ul>
+        <ul class="list-unstyled d-flex justify-content-between align-items-center mb-0">
+          <li>Duration</li>
+          <li>
+            <div class="chip ms-3">{{package.duration}}</div>
+          </li>
+        </ul>
+
+        <div class="d-flex justify-content-between">
+          <a href="{% url 'admin_package_edit' package.id %}" class="btn btn-primary btn-sm">Edit</a>
+          <a href="{% url 'admin_package_delete' package.id %}" class="btn btn-danger btn-sm">Delete</a>
+      </div>
+      </div>
+    </div>
+    </div>
+
+  {% endfor %}
+  </section>
+</div>
+
+{% endblock content %}

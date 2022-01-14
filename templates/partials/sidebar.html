@@ -1,0 +1,30 @@
+<style>
+a{
+  color: rgb(33, 33, 33);
+}
+a:hover{
+  color: rgb(0, 0, 0);
+}
+
+</style>
+<nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+    <div class="position-sticky">
+      <div class="mx-3 mt-4">
+        <a href="{% url 'admin_dashboard' %}" class="d-block px-3 py-4  ripple" aria-current="true">
+          <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Dashboard</span>
+        </a>
+        <a href="{% url 'admin_category_view' %}" class="d-block px-3 py-4 p ripple"><i
+            class="fas fa-hand-holding-usd fa-fw me-3"></i><span>Services</span></a>
+        <a href="{% url 'admin_package_view' %}" class="d-block px-3 py-4 ripple"><i
+            class="fas fa-folder-plus fa-fw me-3"></i><span>Packages</span></a>
+        <a href="{% url 'employee_list_view' %}" class="d-block px-3 py-4 ripple">
+          <i class="fas fa-user-clock fa-fw me-3"></i><span>Employee's</span>
+        </a>
+        <a href="{% url 'admin_appoitment_view' %}" class="d-block px-3 py-4 ripple">
+          <i class="fas fa-user-clock fa-fw me-3"></i><span>Appointments</span>
+        </a>
+        <a href="#" class="d-block px-3 py-4 ripple"><i
+            class="fas fa-chart-bar fa-fw me-3"></i><span>Reports</span></a>
+      </div>
+    </div>
+  </nav>

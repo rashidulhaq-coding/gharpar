@@ -68,17 +68,11 @@
                                 </p>
 
                                 <hr class="mb-3">
-                                <p class="small text-center">By signing in to your account, you agree to Blog <a
-                                        href="">Terms of
-                                        Service</a> and
-                                    consent to
-                                    our <a href="">Cookie Policy</a> and <a href="">Privacy Policy</a>. This site is not
-                                    protected
-                                    by reCAPTCHA and
-                                    is a demonstration website
-                                    for learning purposes only.
-                                </p>
+                                
                             </form>
+                            <p class="small text-center pt-4">
+                                <a href="{% url 'register' %}">Don't have an account?</a>
+                            </p>
                             <p class="small text-center pt-4">
                                 <a href="{% url 'pwdreset' %}">Forgotten Password?</a>
                             </p>
@@ -95,7 +89,6 @@
 </div>
 
 <script>
-email = document.getElementById('id_username').classList.add = 'form-control mb-3'
 
 
 </script>

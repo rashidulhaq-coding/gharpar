@@ -1,0 +1,257 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+{% include "core/user/navbar.html" %}
+<style>
+  .border-muted{
+    border: 1px solid #b8babb!important;
+  }
+  .card-service {
+    width: 350px;
+    border: none;
+    height: 350px;
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden
+  }
+
+  .p-info {
+    display: flex;
+    justify-content: space-between
+  }
+
+  .p-price {
+    position: absolute;
+    right: 10px;
+    top: 20px
+  }
+
+
+  .p-image img {
+    width: 240px;
+    transition: all 0.5s
+  }
+
+  .card-service:hover .heart i {
+    animation: heart 300ms ease-in forwards;
+    animation-delay: 500ms
+  }
+
+  .p-about {
+    position: absolute;
+    width: 170px;
+    font-size: 10px;
+    top: 140px;
+    left: -125px;
+    opacity: 0
+  }
+
+  .card-service:hover .p-about {
+    animation: content 300ms ease-in forwards
+  }
+
+  @keyframes content {
+    0% {
+      opacity: 0
+    }
+
+    100% {
+      opacity: 1;
+      left: 25px
+    }
+  }
+
+  @keyframes heart {
+    0% {
+      opacity: 0
+    }
+
+    100% {
+      opacity: 1
+    }
+  }
+
+  .card-service:hover .p-image img {
+    animation: onimage 300ms ease-in forwards
+  }
+
+  .card-service:hover .p-price {
+    animation: onprice 500ms ease-in forwards
+  }
+
+  @keyframes onprice {
+    0% {
+      right: 10px;
+      top: 20px
+    }
+
+    50% {
+      right: 60px;
+      top: 30px
+    }
+
+    100% {
+      right: 210px;
+      top: 70px
+    }
+  }
+
+  @keyframes onimage {
+    0% {
+      width: 250px
+    }
+
+    50% {
+      width: 200px;
+      transform: translateY(-30px);
+      transform: translateX(100px)
+    }
+
+    100% {
+      width: 180px;
+      top: 100px;
+      transform: translateY(100px);
+      transform: translateX(110px)
+    }
+  }
+
+  .buttons {
+    position: absolute;
+    bottom: -150px
+  }
+
+  .card-service:hover .buttons {
+    animation: buttons 500ms ease-in forwards
+  }
+
+  @keyframes buttons {
+    0% {
+      bottom: -100px
+    }
+
+    100% {
+      bottom: 20px
+    }
+  }
+
+  .btn-card {
+    height: 50px;
+    font-size: 16px;
+    width: 140px !important;
+    font-weight: 600
+  }
+</style>
+<!-- Navbar -->
+<div class="container">
+  <div class="row pt-4">
+    <div class="col-lg-12">
+      <section class="section mt-5 pt-4">
+        <div class="row">
+          <div class="col-lg-8 col-md-12 mb-3 pb-lg-2">
+            <div class="card card-image"
+              style="background-image: url(https://images.unsplash.com/photo-1600948836101-f9ffda59d250?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGFpciUyMHNhbG9ufGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60); height: 100%;">
+              <div class="text-white d-flex rgba-black-strong py-5 px-4">
+                <div>
+                  <h5 class="pink-text">We help you to look better.</h5>
+                  <h3 class="card-title pt-2"><strong>Your service is our passion.</strong></h3>
+                  <p>Fashion salon is </p>
+                  <a class="btn btn-pink"><i class="fas fa-clone left"></i> View project</a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-12 mb-4">
+            <section class="section">
+
+
+              <ul class="list-group z-depth-1">
+                {% for category in categories %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <a class="dark-grey-text font-small">{{category}}</a>
+                  <a href=""></a><span class="badge badge-danger badge-pill">{{category.service_set.count}}</span></a>
+                </li>
+                {% endfor %}
+
+              </ul>
+            </section>
+          </div>
+        </div>
+
+
+
+
+
+        <section class="text-center mb-4">
+
+          {% if services %}
+
+          <!--Grid row-->
+          <h1>Services</h1>
+          <div class="row wow fadeIn">
+            {% for service in services %}
+             <div class="col-lg-4 col-md-6 mb-4">
+              <div class="d-flex justify-content-center align-items-center">
+                <div class="container d-flex justify-content-center">
+                  <div class="card-service p-2 w-100">
+                    <div class="p-info px-3 py-3">
+                      <div>
+                        <h5 class="mb-0">{{service.name}}</h5>
+                      </div>
+                      <div class="p-price d-flex flex-row"> <span>$</span>
+                        <h1>{{service.price}}</h1>
+                      </div>
+                      <div class="heart"> <i class="bx bx-heart"></i> </div>
+                    </div>
+                    <div class="text-center p-image"> <img src="{{package.image.url}}"> </div>
+                    <div class="p-about">
+                      <p>{{service.description}}</p>
+                    </div>
+                    <div class="buttons d-flex flex-row gap-3 px-3"> <button
+                        class="btn-card btn-danger w-100">Book</button> </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            {% endfor %}
+
+          </div>
+          <!--Grid row-->
+          {% endif %}
+          <!--Grid row-->
+        {% if packages %}
+          <h1>Packages</h1>
+
+          <div class="row wow fadeIn">
+            {% for package in packages %}
+            <div class="col-lg-4 col-md-6 mb-4">
+              <div class="d-flex justify-content-center align-items-center">
+                <div class="container d-flex justify-content-center p-1">
+                  <div class="card-service p-1 w-100 border-muted">
+                    <div class="p-info px-3 py-3">
+                      <div>
+                        <h5 class="mb-0">{{package.name}}</h5>
+                      </div>
+                      <div class="p-price d-flex flex-row"> <span>$</span>
+                        <h1>{{package.price}}</h1>
+                      </div>
+                    </div>
+                    <div class="text-center p-image"> <img src="{{package.image.url}}" class="rounded"> </div>
+                    <div class="p-about">
+                      <p>{{package.description}}</p>
+                    </div>
+                    <div class="buttons d-flex flex-row gap-3 px-3"> <a
+                        class="btn-card btn-danger w-100" href= "{% url 'booking_package' package.id %}">Book</a> </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        </section>
+
+
+        {% include 'core/user/footer.html' %}
+        {% endblock %}

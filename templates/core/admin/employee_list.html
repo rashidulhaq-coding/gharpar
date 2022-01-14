@@ -1,0 +1,57 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<header>
+  {% include "partials/sidebar.html" %}
+  {% include "partials/navbar.html" %}
+</header>
+<main style="margin-top: 90px">
+
+  <div class="container mt-5">
+    <h4><a href="{% url 'employee_create_view' %}">Add Employee</a></h4>
+    <div class="table-responsive">
+      <table class="table table-striped table-light table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Position</th>
+            <th>Date of Joining</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for employee in employees %}
+          <tr>
+
+            <td>
+              <div class="d-flex align-items-center">
+                {% if employee.user.image %}
+                <img class="rounded-circle" src="{{employee.user.image.url}}" width="30">
+                {% endif %}
+                <span class="ml-2">{{employee.user.first_name}} {{employee.user.last_name}}</span>
+              </div>
+            </td>
+            <td>{{employee.user.email}}<br></td>
+            <td class="font-weight-bold">{{employee.position}}</td>
+            <td>{{employee.user.date_joined}}</td>
+            <td><a href="{% url 'employee_edit_view' employee.user.id %}">
+                <i class="fa fa-edit text-primary"></i>
+              </a>
+            </td>
+            <td>
+              <a href="{% url 'employee_delete_view' employee.user.id %}">
+                <i class="fa fa-trash text-danger"></i>
+            </td>
+            </a>
+          </tr>
+
+          {% endfor %}
+
+        </tbody>
+      </table>
+
+      
+    </div>
+  </div>
+</main>
+{% endblock %}
