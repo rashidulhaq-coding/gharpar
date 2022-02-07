@@ -1,7 +1,7 @@
 from django import forms
 from .models import *
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, PasswordChangeForm, SetPasswordForm
-
+from .widget import DatePickerInput, TimePickerInput, DateTimePickerInput
 
 class PwdChangeForm(PasswordChangeForm):
     old_password = forms.CharField(label="Old Password",
@@ -168,6 +168,13 @@ class Employee_form(forms.ModelForm):
     class Meta:
         model = Employee
         fields = ('position','salary')
-    
-    
 
+# timing form 
+class Timing_form(forms.ModelForm):
+    # choice field position for the employee
+    time = forms.TimeField(widget=TimePickerInput(
+        attrs={'class': 'form-control mb-3', 'placeholder': 'Time', 'id': 'form-time','required':False}))
+    
+    class Meta:
+        model = Timing
+        fields = ('time',)

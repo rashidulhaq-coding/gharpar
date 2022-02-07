@@ -135,33 +135,33 @@ class Package_Form(forms.ModelForm):
        
 # appointment model form
 class Appointment_Form(forms.ModelForm):
-    years = range(datetime.date.today().year, datetime.date.today().year+1)
-    m = list(range(datetime.date.today().month-1,datetime.date.today().month+1))
-    months = []
-    for month in m:
-        months.append(MONTHS[month])
+    # years = range(datetime.date.today().year, datetime.date.today().year+1)
+    # m = list(range(datetime.date.today().month-1,datetime.date.today().month+1))
+    # months = []
+    # for month in m:
+    #     months.append(MONTHS[month])
     
-    zip_iterator = zip(m, months)
-    a_dictionary = dict(zip_iterator)
-    dob = forms.DateField(
-        label='What is your birth date?',
-        # change the range of the years from 1980 to currentYear - 5
-        widget=forms.SelectDateWidget(
+    # zip_iterator = zip(m, months)
+    # a_dictionary = dict(zip_iterator)
+    # dob = forms.DateField(
+    #     label='What is your birth date?',
+    #     # change the range of the years from 1980 to currentYear - 5
+    #     widget=forms.SelectDateWidget(
             
-            months=a_dictionary,
-            years=years,
-            attrs={
-                'placeholder': 'Date',
-                'class': 'form-control my-2',
-            }
+    #         months=a_dictionary,
+    #         years=years,
+    #         attrs={
+    #             'placeholder': 'Date',
+    #             'class': 'form-control my-2',
+    #         }
         
-        )
+    #     )
         # widget=forms.SplitDateTimeWidget(
         #     # months=a_dictionary,
         #     years=years,
             
         # )
-    )
+    # )
     class Meta:
        model = Appointment
        fields = ['status',]

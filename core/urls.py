@@ -22,7 +22,21 @@ urlpatterns = [
     path('appointment/status/<int:pk>/', admin_appoitment_status, name='admin_appoitment_status'),
     
     # path('booking/service/<str:pk>/', booking_service, name='booking_service'),
-    path('booking/package/<str:pk>/', booking_package, name='booking_package'),
+    path('booking-employee/<str:pk>/',booking_employee, name='booking_employee'),
+    path('booking_employee_confirm/<str:pk>/<str:package>/',booking_package, name='booking_employee_confrim'),
+    
+    
+    
+    # employee urls
+    path('employee/', employee_dashboard, name='employee_dashboard'),
+    path('employee/appointments/', employee_appointment_view, name='employee_appointment_view'),
+    path('employee/timings/', employee_timing_view, name='employee_timing_view'),
+    path('employee/timings/create/', employee_timing_create, name='employee_timing_create'),
+    path('employee/timings/edit/<str:pk>',employee_timing_edit, name='employee_timing_edit'),
+    path('employee/timings/delete/<str:pk>',employee_timing_delete, name='employee_timing_delete'),
+    
+    
+    
     
     
     

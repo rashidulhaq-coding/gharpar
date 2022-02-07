@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import User
+from accounts.models import Employee
 
 # category model for salon
 class Category(models.Model):
@@ -53,6 +54,7 @@ class Appointment(models.Model):
         ('Cancelled','Cancelled'),
         ('Completed','Completed'),
     )
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name='Employee',default=2)
     customer = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Customer')
     package = models.ForeignKey(Package, on_delete=models.CASCADE, verbose_name='Package', blank=True, null=True)
     service = models.ForeignKey(Service, on_delete=models.CASCADE, verbose_name='Service', blank=True, null=True)

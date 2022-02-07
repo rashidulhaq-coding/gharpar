@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, redirect, render
-
+from django.contrib import messages
 from core.forms import Service_Form
 from .models import *
 from .forms import *
@@ -8,6 +8,9 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 # import timedelta
 
+from accounts.forms import Timing_form
+from accounts.models import *
+from django.forms import formset_factory
 # Admin views
 
 
@@ -17,7 +20,7 @@ def admin_dashboard(request):
     confirmed = appointments.filter(status='Confirmed').count()
     completed = appointments.filter(status='Completed').count()
     canceled = appointments.filter(status='Canceled').count()
-    
+
     context = {
         'appointments': appointments.count(),
         'pending': pending,
@@ -193,6 +196,8 @@ def admin_package_delete(request, pk):
     return render(request, 'core/admin/delete_view.html', {'delete': package})
 
 # appoitment view
+
+
 def admin_appoitment_view(request):
     appointments = Appointment.objects.all()
     # get the appointments where status is pending
@@ -208,6 +213,8 @@ def admin_appoitment_view(request):
     return render(request, 'core/admin/appointment_view.html', context)
 
 # appointment staus change view
+
+
 def admin_appoitment_status(request, pk):
     appointment = get_object_or_404(Appointment, pk=pk)
     if request.method == 'POST':
@@ -215,10 +222,112 @@ def admin_appoitment_status(request, pk):
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.save()
-            return redirect('admin_appoitment_view')
+            if request.user.employee:
+                return redirect('employee_appointment_view')
+            else:
+                return redirect('admin_appoitment_view')
     else:
         form = Appointment_Form(instance=appointment)
     return render(request, 'core/admin/create_service.html', {'form': form})
+
+# employee view
+
+
+def employee_dashboard(request):
+    appointments = Appointment.objects.filter(employee=request.user.employee)
+    pending = appointments.filter(status='Pending').count()
+    confirmed = appointments.filter(status='Confirmed').count()
+    completed = appointments.filter(status='Completed').count()
+    canceled = appointments.filter(status='Canceled').count()
+    context = {
+        'appointments': appointments.count(),
+        'pending': pending,
+        'confirmed': confirmed,
+        'completed': completed,
+        'canceled': canceled,
+    }
+    return render(request, 'core/admin/index.html', context)
+
+
+def employee_appointment_view(request):
+    appointments = Appointment.objects.filter(employee=request.user.employee)
+    confirmed = appointments.filter(status='Confirmed')
+    cancelled = appointments.filter(status='Cancelled')
+    pending = appointments.filter(status='Pending')
+    context = {
+        'appointments': appointments,
+        'confirmed': confirmed,
+        'cancelled': cancelled,
+        'pending': pending,
+    }
+    return render(request, 'core/admin/appointment_view.html', context)
+
+# timing set up by employee
+
+
+def employee_timing_view(request):
+    timing = Timing.objects.filter(employee=request.user.employee)
+    shifts = Shift.objects.all()
+    context = {
+        'timing': timing,
+        'shifts': shifts,
+    }
+    return render(request, 'core/employee/timing_view.html', context)
+
+
+def employee_timing_create(request):
+    
+    if request.method == 'POST':
+        shift = Shift.objects.get(pk=request.POST['shift'])
+        time = request.POST['time']
+        time = datetime.strptime(time, '%H:%M').time()
+        start_time = shift.start_time
+        end_time =shift.end_time
+        forms = Timing_form(request.POST)
+        if forms.is_valid():
+            timing = forms.save(commit=False)
+            timing.employee = request.user.employee
+            if time > start_time and time <end_time:
+                timing.time_slot = time
+                timing.shift = shift
+                timing.save()
+                return redirect('employee_timing_view')
+            else:
+                messages.error(request, 'Time slot is not in shift time')
+                return redirect('employee_timing_create')
+    else:
+        forms = Timing_form()
+
+    return render(request, 'core/employee/create_timing.html', {'forms': forms, 'shifts': Shift.objects.all()})
+
+def employee_timing_edit(request, pk):
+    
+    timing = Timing.objects.get(pk=pk)
+    if request.method == 'POST':
+        forms = Timing_form(request.POST, instance=timing)
+        shift = Shift.objects.get(pk=request.POST['shift'])
+        time = request.POST['time']
+        time = datetime.strptime(time, '%H:%M').time()
+        start_time = shift.start_time
+        end_time = shift.end_time
+        if forms.is_valid():
+            timing = forms.save(commit=False)
+            timing.employee = request.user.employee
+            if time > start_time and time < end_time:
+                timing.time_slot = time
+                timing.shift = shift
+                timing.save()
+                return redirect('employee_timing_view')
+    else:
+        forms = Timing_form(instance=timing)
+    return render(request, 'core/employee/create_timing.html', {'forms': forms, 'shifts': Shift.objects.all()})
+
+def employee_timing_delete(request, pk):
+    timing = Timing.objects.get(pk=pk)
+    if request.method == 'POST':
+        timing.delete()
+        return redirect('employee_timing_view')
+    return render(request, 'core/employee/delete_view.html', {'delete': timing.time_slot})
 
 
 
@@ -236,17 +345,36 @@ def home_view(request):
     }
     return render(request, 'core/user/home.html', context)
 
+def booking_employee(request, pk):
+    employees = Employee.objects.all()
+    if request.method == 'POST':
+        employee = request.POST['employee']
+        employee = get_object_or_404(Employee, pk=employee)
+        return redirect('booking_employee_confrim', pk=employee.id, package= pk)
+    context = {
+        'employees': employees,
+        'package': pk,
+    }
+    return render(request, 'core/user/booking_employee.html', context)
 
-def booking_package(request, pk):
-    package = get_object_or_404(Package, pk=pk)
+
+def booking_package(request, pk, package):
+    package = get_object_or_404(Package, pk=package)
+    employee = get_object_or_404(Employee, pk=pk)
     if request.method == 'POST':
         package = package
         customer = request.user
-        date = request.POST['date']
-        time = request.POST['time']
+        date = request.POST['time']
+        print(date)
+        splitting = date.split()
+        date_only = splitting[0]
+        time_only = splitting[1]
+        date_only = date_only.replace('/', '-')
+        time = time_only
+        date = date_only
         duration = package.duration
         t = time.split(':')
-        h= int(t[0])
+        h = int(t[0])
         minute = int(t[1])
         start_date = timedelta(hours=h, minutes=minute)
         total_minute = minute + duration
@@ -254,11 +382,13 @@ def booking_package(request, pk):
             total_minute = total_minute - 60
             h = h + 1
         end_date = timedelta(hours=h, minutes=int(total_minute))
-        booking = Appointment(customer=customer, package=package, date= date,
+        booking = Appointment(employee=employee, customer=customer, package=package, date= date,
                               start_time=str(start_date), end_time=str(end_date))
+        print(booking)
         booking.save()
         return redirect('home')
     context = {
         'package': package.id,
+        'employee': employee.id,
     }
-    return render(request, 'core/user/booking.html', context)
+    return render(request, 'core/user/booking_package.html', context)

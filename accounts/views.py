@@ -79,6 +79,7 @@ def employee_create_view(request):
         if user_form.is_valid() and employee_form.is_valid():
             user = user_form.save(commit=False)
             user.is_active = True
+            user.is_employee= True
             password = User.objects.make_random_password(
                 length=14, allowed_chars="abcdefghjkmnpqrstuvwxyz01234567889")  # zvk0hawf8m6394
             user.set_password(password)

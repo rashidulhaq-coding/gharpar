@@ -8,19 +8,17 @@
                     <div class="row justify-content-center">
                         <div class="col-lg-3 col-md-1 col-0"></div>
                             <div class="col-lg-9 col-md-11 col-12 list text-left">
-                            <form action="{% url 'booking_package' package %}" method="post">
+                            <form action="{% url 'booking_employee' package %}" method="post">
                             {% csrf_token %}
                                     <div class="row">
                                         <div class="col-lg-6 col-md-6 col-sm-6 col-6">
-                                            <label>Date</label>
-                                            <input type="date" name="date" class="form-control" required>
-                                            <br>
-                                            <label>Time</label>
-                                            <input type="time" name="time" class="form-control" required>
-
-                                        </div>
-                                        
-                                        
+                                        <select id="cars" name="employee">
+                                            <option value="">Select Employee</option>
+                                            {% for employee in employees %}
+                                            <option value="{{employee.id}}">{{employee.user.first_name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                        </div>   
                                     </div>
                                     <br>
                            <div class="col-lg-6 col-md-6 col-sm-6 col-6">

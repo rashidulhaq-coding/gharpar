@@ -44,18 +44,29 @@ class Employee(models.Model):
         return self.user.first_name + ' ' + self.user.last_name
 
 class Shift(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100,default='Morning Shift')
     start_time = models.TimeField()
     end_time = models.TimeField()
     
     
     
     def __str__(self):
-        return self.employee.user.first_name + ' ' + self.employee.user.last_name + ' ' + self.start_time.strftime('%H:%M') + ' - ' + self.end_time.strftime('%H:%M')
+        #return self.name + ' ' + self.start_time.strftime('%H:%M') + ' - ' + self.end_time.strftime('%H:%M')
+        return self.name
+
+# timing model for employee
+class Timing(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    shift = models.ForeignKey(Shift, on_delete=models.CASCADE, default=1)
+    time_slot = models.TimeField(null=True, blank=True)
+
+    def __str__(self):
+        #return self.employee.user.first_name + ' ' + self.shift.name + ' ' + self.time_slot.strftime('%H:%M')
+        return self.shift.name
+    
 
 class Holiday(models.Model):
     holiday_date = models.DateField()
     description = models.CharField(max_length=100)
-
     def __str__(self):
         return self.holiday_date.strftime('%Y-%m-%d') + ' ' + self.description

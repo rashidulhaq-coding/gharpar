@@ -10,7 +10,8 @@ a:hover{
 <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
     <div class="position-sticky">
       <div class="mx-3 mt-4">
-        <a href="{% url 'admin_dashboard' %}" class="d-block px-3 py-4  ripple" aria-current="true">
+      {% if request.user.is_superuser %}
+      <a href="{% url 'admin_dashboard' %}" class="d-block px-3 py-4  ripple" aria-current="true">
           <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Dashboard</span>
         </a>
         <a href="{% url 'admin_category_view' %}" class="d-block px-3 py-4 p ripple"><i
@@ -25,6 +26,23 @@ a:hover{
         </a>
         <a href="#" class="d-block px-3 py-4 ripple"><i
             class="fas fa-chart-bar fa-fw me-3"></i><span>Reports</span></a>
+      {% elif request.user.is_employee %}
+      <a href="{% url 'employee_dashboard' %}" class="d-block px-3 py-4  ripple" aria-current="true">
+          <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Dashboard</span>
+        </a>
+        <a href="{% url 'employee_timing_view' %}" class="d-block px-3 py-4 p ripple"><i
+            class="fas fa-hand-holding-usd fa-fw me-3"></i><span>Timing</span></a>
+        
+        {% comment %} <a href="{% url 'employee_timing_create' %}" class="d-block px-3 py-4 p ripple"><i
+            class="fas fa-hand-holding-usd fa-fw me-3"></i><span>Services</span></a>
+         {% endcomment %}
+        <a href="{% url 'employee_appointment_view' %}" class="d-block px-3 py-4 ripple">
+          <i class="fas fa-user-clock fa-fw me-3"></i><span>Appointments</span>
+        </a>
+
+      {% else %}
+      {% endif %}
+        
       </div>
     </div>
   </nav>

@@ -1,0 +1,57 @@
+{% extends "base.html" %} {% load static %}
+{% comment %} {% load humanize %} {% endcomment %}
+ {% block content %}
+<header>
+  <!-- Sidebar -->
+  {% include "partials/sidebar.html" %}
+  <!-- Navbar -->
+  {% include "partials/navbar.html" %}
+<style>
+</style>
+</header>
+
+
+<main style="margin-top: 78px">
+<div class="container-fluid">
+  <section class="row mt-5 pt-4">
+  <div class="col-8 mx-auto my-2">
+  {% comment %} meesages here {% endcomment %}
+  {% if messages %}
+ {% for message in messages %}
+ <div class="alert alert-warning alert-dismissible fade show" role="alert">
+  <strong>Hey!</strong> {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+  <form action="" method="post" enctype='multipart/form-data'>
+
+{% comment %} {{ forms.management_data }} {% endcomment %}
+  {% csrf_token %}
+    <div class="form-group mb-3">
+        <label for="title">Shift</label>
+        <select name="shift" class="form-control">]
+            {% for shift in shifts %}
+            <option value="{{shift.id}}">{{shift.name}} {{shift.start_time}} -{{shift.end_time}}</option>
+            {% endfor %}
+        </select>
+    </div>
+  
+  
+    <!-- Using the formset -->
+    {{ forms.as_p }}
+      
+    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+  </form>
+  </div>
+  </section>
+</div>
+</main>
+  {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}
