@@ -12,6 +12,7 @@ from django.template.loader import render_to_string
 from .models import Employee, User
 from django.contrib.auth import login
 from django.core.mail import send_mail
+from .restrictions import *
 
 # Create your views here.
 def accounts_register(request):
@@ -71,6 +72,7 @@ def user_update(request):
 
 
 # Employee creation by admin
+@only_admin
 def employee_create_view(request):
     # creating employee with user form and employee form
     if request.method == 'POST':
@@ -103,11 +105,12 @@ def employee_create_view(request):
     return render(request, 'core/admin/employee_create.html', {'form': user_form, 'employee_form': employee_form})
 
 # employee edit view
+@only_admin
 def employee_edit_view(request,id):
     user = get_object_or_404(User, id=id)
     if request.method == 'POST':
         user_form = Employee_User(request.POST, instance=user)
-        employee_form = Employee_form(request.POST, instance=ruser.employee)
+        employee_form = Employee_form(request.POST, instance=user.employee)
         if user_form.is_valid() and employee_form.is_valid():
             user_form.save()
             employee_form.save()
@@ -118,6 +121,7 @@ def employee_edit_view(request,id):
     return render(request, 'core/admin/employee_create.html', {'form': user_form, 'employee_form': employee_form})
 
 # employee delete view
+@only_admin
 def employee_delete_view(request,id):
     user = get_object_or_404(User, id=id)
     employee= get_object_or_404(Employee, user=user)
@@ -127,6 +131,7 @@ def employee_delete_view(request,id):
 
 
 # Employee list view
+@only_admin
 def employee_list_view(request):
     # list of employees
     employees = Employee.objects.all()

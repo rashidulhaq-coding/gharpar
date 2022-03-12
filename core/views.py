@@ -11,9 +11,13 @@ from datetime import datetime, timedelta
 from accounts.forms import Timing_form
 from accounts.models import *
 from django.forms import formset_factory
+
+from django.http import JsonResponse
+from accounts.restrictions import *
 # Admin views
 
 
+@only_admin
 def admin_dashboard(request):
     appointments = Appointment.objects.all()
     pending = appointments.filter(status='Pending').count()
@@ -32,6 +36,7 @@ def admin_dashboard(request):
 # creating category view
 
 
+@only_admin
 def admin_category_view(request):
     categories = Category.objects.all()
     context = {
@@ -42,6 +47,7 @@ def admin_category_view(request):
 # category create view
 
 
+@only_admin
 def admin_category_create(request):
     if request.method == 'POST':
         form = Category_Form(request.POST, request.FILES)
@@ -56,6 +62,7 @@ def admin_category_create(request):
 # category edit view
 
 
+@only_admin
 def admin_category_edit(request, pk):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
@@ -71,6 +78,7 @@ def admin_category_edit(request, pk):
 # category delete view
 
 
+@only_admin
 def admin_category_delete(request, pk):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
@@ -79,6 +87,7 @@ def admin_category_delete(request, pk):
     return render(request, 'core/admin/delete_view.html', {'delete': category})
 
 
+@only_admin
 def admin_service_view(request, pk):
     category = get_object_or_404(Category, pk=pk)
     services = Service.objects.filter(category=category)
@@ -91,6 +100,7 @@ def admin_service_view(request, pk):
 # service edit view
 
 
+@only_admin
 def admin_service_edit(request, pk):
     service = get_object_or_404(Service, pk=pk)
     if request.method == 'POST':
@@ -106,6 +116,7 @@ def admin_service_edit(request, pk):
 # service delete view
 
 
+@only_admin
 def admin_service_delete(request, pk):
     service = get_object_or_404(Service, pk=pk)
     if request.method == 'POST':
@@ -114,6 +125,7 @@ def admin_service_delete(request, pk):
     return render(request, 'core/admin/delete_view.html', {'delete': service})
 
 
+@only_admin
 def create_service(request, pk):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
@@ -129,6 +141,7 @@ def create_service(request, pk):
     return render(request, 'core/admin/create_service.html', {'form': form})
 
 
+@only_admin
 def admin_package_view(request):
     packages = Package.objects.all()
     context = {
@@ -137,6 +150,7 @@ def admin_package_view(request):
     return render(request, 'core/admin/package_view.html', context)
 
 
+@only_admin
 def admin_package_create(request):
     if request.method == 'POST':
         form = Package_Form(request.POST, request.FILES)
@@ -163,6 +177,7 @@ def admin_package_create(request):
     return render(request, 'core/admin/create_service.html', {'form': form})
 
 
+@only_admin
 def admin_package_edit(request, pk):
     package = get_object_or_404(Package, pk=pk)
     if request.method == 'POST':
@@ -188,6 +203,7 @@ def admin_package_edit(request, pk):
     return render(request, 'core/admin/create_service.html', {'form': form})
 
 
+@only_admin
 def admin_package_delete(request, pk):
     package = get_object_or_404(Package, pk=pk)
     if request.method == 'POST':
@@ -198,6 +214,7 @@ def admin_package_delete(request, pk):
 # appoitment view
 
 
+@only_admin
 def admin_appoitment_view(request):
     appointments = Appointment.objects.all()
     # get the appointments where status is pending
@@ -233,6 +250,7 @@ def admin_appoitment_status(request, pk):
 # employee view
 
 
+@only_employee
 def employee_dashboard(request):
     appointments = Appointment.objects.filter(employee=request.user.employee)
     pending = appointments.filter(status='Pending').count()
@@ -249,6 +267,7 @@ def employee_dashboard(request):
     return render(request, 'core/admin/index.html', context)
 
 
+@only_employee
 def employee_appointment_view(request):
     appointments = Appointment.objects.filter(employee=request.user.employee)
     confirmed = appointments.filter(status='Confirmed')
@@ -265,8 +284,9 @@ def employee_appointment_view(request):
 # timing set up by employee
 
 
+@only_employee
 def employee_timing_view(request):
-    timing = Timing.objects.filter(employee=request.user.employee)
+    timing = Timing.objects.all()
     shifts = Shift.objects.all()
     context = {
         'timing': timing,
@@ -275,19 +295,20 @@ def employee_timing_view(request):
     return render(request, 'core/employee/timing_view.html', context)
 
 
+@only_employee
 def employee_timing_create(request):
-    
+
     if request.method == 'POST':
         shift = Shift.objects.get(pk=request.POST['shift'])
         time = request.POST['time']
         time = datetime.strptime(time, '%H:%M').time()
         start_time = shift.start_time
-        end_time =shift.end_time
+        end_time = shift.end_time
         forms = Timing_form(request.POST)
         if forms.is_valid():
             timing = forms.save(commit=False)
-            timing.employee = request.user.employee
-            if time > start_time and time <end_time:
+            # timing.employee = request.user.employee
+            if time > start_time and time < end_time:
                 timing.time_slot = time
                 timing.shift = shift
                 timing.save()
@@ -300,8 +321,10 @@ def employee_timing_create(request):
 
     return render(request, 'core/employee/create_timing.html', {'forms': forms, 'shifts': Shift.objects.all()})
 
+
+@only_employee
 def employee_timing_edit(request, pk):
-    
+
     timing = Timing.objects.get(pk=pk)
     if request.method == 'POST':
         forms = Timing_form(request.POST, instance=timing)
@@ -312,7 +335,7 @@ def employee_timing_edit(request, pk):
         end_time = shift.end_time
         if forms.is_valid():
             timing = forms.save(commit=False)
-            timing.employee = request.user.employee
+            # timing.employee = request.user.employee
             if time > start_time and time < end_time:
                 timing.time_slot = time
                 timing.shift = shift
@@ -322,14 +345,14 @@ def employee_timing_edit(request, pk):
         forms = Timing_form(instance=timing)
     return render(request, 'core/employee/create_timing.html', {'forms': forms, 'shifts': Shift.objects.all()})
 
+
+@only_employee
 def employee_timing_delete(request, pk):
     timing = Timing.objects.get(pk=pk)
     if request.method == 'POST':
         timing.delete()
         return redirect('employee_timing_view')
     return render(request, 'core/employee/delete_view.html', {'delete': timing.time_slot})
-
-
 
 
 # user views
@@ -345,19 +368,102 @@ def home_view(request):
     }
     return render(request, 'core/user/home.html', context)
 
+
+@only_user
 def booking_employee(request, pk):
     employees = Employee.objects.all()
+    package = get_object_or_404(Package, pk=pk)
+
     if request.method == 'POST':
-        employee = request.POST['employee']
-        employee = get_object_or_404(Employee, pk=employee)
-        return redirect('booking_employee_confrim', pk=employee.id, package= pk)
+        package = package
+        customer = request.user
+        date = request.POST.get('date', None)
+        time = request.POST.get('time', None)
+        employee = Employee.objects.get(id=request.POST.get('employee'))
+        date_only = date.replace('/', '-')
+        date = date_only
+        duration = package.duration
+        t = time.split(':')
+        h = int(t[0])
+        minute = int(t[1])
+        start_date = timedelta(hours=h, minutes=minute)
+        total_minute = minute + duration
+        if total_minute > 60:
+            total_minute = total_minute - 60
+            h = h + 1
+        end_date = timedelta(hours=h, minutes=int(total_minute))
+        booking = Appointment(employee=employee, customer=customer, package=package, date=date,
+                              start_time=str(start_date), end_time=str(end_date))
+        booking.save()
+        return redirect('home')
     context = {
+        'package': package.id,
         'employees': employees,
-        'package': pk,
     }
     return render(request, 'core/user/booking_employee.html', context)
 
 
+@only_user
+def validate_employee(request):
+    username = request.POST.get('employee', None)
+    holiday = Holiday.objects.all()
+    holiday_dates = []
+    for i in holiday:
+        holiday_dates.append(i.date)
+    data = {
+        'is_taken': Employee.objects.filter(id=username).exists(),
+        'holidays': holiday_dates
+    }
+    return JsonResponse(data)
+
+
+@only_user
+def validate_date(request):
+    date = request.POST.get('date', None)
+    holiday = Holiday.objects.filter(holiday_date=date).exists()
+    print(date)
+    dat = date.split('-')
+    day = int(dat[2])+1
+    date = dat[0]+'-'+dat[1]+'-'+str(day)
+    if holiday:
+        data = {
+            'is_taken': True,
+            'times': []
+        }
+        return JsonResponse(data)
+    else:
+        appointments = Appointment.objects.filter(date=date)
+        times = Timing.objects.all()
+        available_times = []
+        if appointments:
+            for time in times:
+                for apointment in appointments:
+                    if apointment.start_time == time.time_slot:
+                        pass
+                    elif time.time_slot > apointment.start_time and time.time_slot < apointment.end_time:
+                        pass
+                    else:
+                        available_times.append(time)
+        else:
+            for time in times:
+                available_times.append(time.time_slot)
+        data = {
+            'is_taken': False,
+            'times': available_times,
+        }
+        return JsonResponse(data)
+
+
+@only_user
+def validate_time(request, date):
+    time = request.POST.get('time', None)
+    data = {
+        'is_taken': Timing.objects.filter(time=time).exists(),
+    }
+    return JsonResponse(data)
+
+
+@only_user
 def booking_package(request, pk, package):
     package = get_object_or_404(Package, pk=package)
     employee = get_object_or_404(Employee, pk=pk)
@@ -382,7 +488,7 @@ def booking_package(request, pk, package):
             total_minute = total_minute - 60
             h = h + 1
         end_date = timedelta(hours=h, minutes=int(total_minute))
-        booking = Appointment(employee=employee, customer=customer, package=package, date= date,
+        booking = Appointment(employee=employee, customer=customer, package=package, date=date,
                               start_time=str(start_date), end_time=str(end_date))
         print(booking)
         booking.save()
@@ -392,3 +498,14 @@ def booking_package(request, pk, package):
         'employee': employee.id,
     }
     return render(request, 'core/user/booking_package.html', context)
+
+
+# user dashboard
+@only_user
+def user_dashboard(request):
+    appointments = Appointment.objects.filter(customer=request.user)
+    pending = appointments.filter(status='Pending')
+    completed = appointments.filter(status='Completed')
+    confirmed = appointments.filter(status='Confirmed')
+
+    return render(request, 'core/user/user_dashboard.html', {'appointments': appointments, 'pending': pending, 'completed': completed, 'confirmed': confirmed})

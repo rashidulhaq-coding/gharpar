@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import *
+from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
     # Common urls
@@ -22,9 +23,13 @@ urlpatterns = [
     path('appointment/status/<int:pk>/', admin_appoitment_status, name='admin_appoitment_status'),
     
     # path('booking/service/<str:pk>/', booking_service, name='booking_service'),
-    path('booking-employee/<str:pk>/',booking_employee, name='booking_employee'),
+    path('booking/<str:pk>/', booking_employee, name='booking_employee'),
     path('booking_employee_confirm/<str:pk>/<str:package>/',booking_package, name='booking_employee_confrim'),
-    
+    path('validate_employee/', csrf_exempt(validate_employee),name='validate_employee'),
+    path("validate_date/", csrf_exempt(validate_date), name="validate_date"),
+    path("validate_time/<str:date>",csrf_exempt(validate_time), name="validate_time"),
+    # user dashboard
+    path('user/dashboard/', user_dashboard, name='user_dashboard'),
     
     
     # employee urls
