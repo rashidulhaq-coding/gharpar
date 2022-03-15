@@ -32,5 +32,5 @@ def only_user(function):
         if request.user.is_authenticated and request.user.is_employee == False and request.user.is_superuser == False:
             return function(request, *args, **kwargs)
         else:
-            return redirect('/')
+            return redirect('login')
     return wrapper
