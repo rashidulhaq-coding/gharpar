@@ -1,0 +1,76 @@
+{% extends "core/core_base.html" %}
+{% load static %}
+{% block content %}
+  <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+
+  <div class="carousel-wrap">
+    <div class="owl-carousel">
+    {% for category in categories %}
+    <div class="item">
+        <a href="#{{category.name}}">{{category.name}}</a>
+      </div>
+    {% endfor %}
+    </div>
+  </div>
+  <div class="container">
+    <div class="m-auto" style="width: 90%;">
+      <div class="row g-3">
+      {% for service in services %}
+      {% if service.services %}
+      <p class="fw-bold fs-5" id="{{service.category}}">{{service.category}}</p>
+      
+      
+      {% for s in service.services %}
+        <div class="col-md-6">
+          <div class="card bg-white shadow-lg border-0">
+            <div class="card-body">
+              <h4 class="card-title fs-5">{{s}}</h4>
+              <p class="card-text p-y-1 text-black-50">{{s.duration}} ${{s.price}}</p>
+              <a href="#" class="btn btn-outline-primary">Book</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      {% endif %}
+      {% endfor %}  
+      </div>
+    </div>
+    <br>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+  <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+  <script>
+    $('.owl-carousel').owlCarousel({
+      loop: true,
+      margin: 0,
+      nav: true,
+      autoplay: false,
+
+      navText: [
+        // "<i class='fa fa-caret-left'></i>",
+        // "<i class='fa fa-caret-right'></i>" bootstrap-icons.css
+        "<i class='bi bi-chevron-left'></i>",
+        "<i class='bi bi-chevron-right'></i>"
+      ],
+
+      autoplay: false,
+      owlnav: true,
+      autoHeight: true,
+      responsive: {
+        0: {
+          items: 1
+        },
+        600: {
+          items: 3
+        },
+        1000: {
+          items: 5
+        },
+      }
+    })
+  </script>
+
+{% endblock content %}

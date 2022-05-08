@@ -47,6 +47,20 @@ class Package(models.Model):
 
 # Appoitment model 
 
+
+# class OrderItem(models.Model):
+#     user = models.ForeignKey(User,
+#                              on_delete=models.CASCADE)
+#     ordered = models.BooleanField(default=False)
+#     item = models.ForeignKey(Service, on_delete=models.CASCADE)
+
+#     def __str__(self):
+#         return f"{self.user} ordered {self.item.name}"
+
+#     def get_total_item_price(self):
+#         return self.quantity * self.item.price
+
+
 class Appointment(models.Model):
     OPTIONS = (
         ('Pending','Pending'),

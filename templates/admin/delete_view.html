@@ -1,0 +1,14 @@
+{% extends "partials/base.html" %} {% load static %} {% block content %}
+<main class="container-fluid">
+<section class="row" style="">
+  <div class="col-8 mx-auto my-2">
+  Are you sure you want to delete {{delete}}?
+  <form action="" method="post" enctype='multipart/form-data'>
+  {% csrf_token %}
+  {{form.as_p}}
+    <button type="submit" class="mt-2 btn btn-danger">Submit</button>
+  </form>
+  </div>
+  </section>
+</main>
+{% endblock %}

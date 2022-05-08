@@ -1,0 +1,15 @@
+{% extends "partials/base.html" %} {% load static %} {% block content %}
+<main class="container-fluid">
+<section class="row" style="">
+  <div class="col-8 mx-auto">
+  <h3 class="text-primary text-center font-weight-bold">{{title}}</h3>
+  <form action="" method="post" enctype='multipart/form-data'>
+  {% csrf_token %}
+  {{form.as_p}}
+{{employee_form.as_p}}
+    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+  </form>
+  </div>
+  </section>
+</main>
+{% endblock %}

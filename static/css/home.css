@@ -1,0 +1,160 @@
+html{
+    scroll-behavior: smooth;
+}
+
+.text-primary {
+    color: #103178 !important;
+}
+.title{
+    color: #103178 !important;
+}
+.text-color{
+    color: #103178;
+}
+.btn-primary{
+    background-color: #103178;
+    border-color: #103178;
+}
+.display-1 {
+    font-family: 'Inria Serif', serif;
+    font-size: 3.8rem;
+    line-height: 1.1;
+}
+.display-4 {
+    font-family: 'Inria Serif', serif;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+.display-7 {
+    font-family: 'Inria Serif', serif;
+    font-size: 1.4rem;
+}
+.navbar-brand,.nav-link {
+    font-family: 'Lato', serif;
+}
+.nav-link{
+    font-weight: 500 !important;
+}
+.nav-link:hover{
+    color: #007bff !important;
+}
+.header{
+    height: 80vh;
+    width: 100%;
+    margin: 30vh 0;
+}
+.hair{
+    height:80vh;
+    width: 100%;
+    background: url("https://images.unsplash.com/photo-1622296089780-1aba6f53dbb9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fG1lbiUyMGhhaXJjdXR8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60") no-repeat;
+    background-size: cover;
+    background-position: right;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    /* gray mask */
+    
+    z-index: -1;
+
+}
+
+.carousel-wrap {
+  margin: 90px auto;
+  padding: 0 5%;
+  width: 80%;
+  position: relative;
+}
+
+/* fix blank or flashing items on carousel */
+.owl-carousel .item {
+  position: relative;
+  z-index: 100; 
+  -webkit-backface-visibility: hidden; 
+}
+
+.owl-nav .owl-prev{
+    left: -30px;
+}
+.owl-nav .owl-next{
+    right: 0px;
+}
+    .owl-nav button {
+    position: absolute;
+    top: 0;
+}
+a{
+    text-decoration: none;
+    color: black;
+}
+
+
+.social-link {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  border-radius: 50%;
+  transition: all 0.3s;
+  font-size: 0.9rem;
+}
+
+.social-link:hover,
+.social-link:focus {
+  background: #ddd;
+  text-decoration: none;
+  color: #555;
+}
+
+
+.contact-form{
+    background: #fff;
+    margin-top: 2%;
+    margin-bottom: 5%;
+    width: 70%;
+}
+.contact-form .form-control{
+    border-radius:1rem;
+}
+.contact-image{
+    text-align: center;
+}
+.contact-image img{
+    border-radius: 6rem;
+    width: 11%;
+    margin-top: -3%;
+    transform: rotate(29deg);
+}
+.contact-form form{
+    padding: 14%;
+}
+.contact-form form .row{
+    margin-bottom: -7%;
+}
+.contact-form h3{
+    margin-bottom: 8%;
+    margin-top: -10%;
+    text-align: center;
+    color: #0062cc;
+}
+.contact-form .btnContact {
+    width: 50%;
+    border: none;
+    border-radius: 1rem;
+    padding: 1.5%;
+    background: #dc3545;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+}
+.btnContactSubmit
+{
+    width: 50%;
+    border-radius: 1rem;
+    padding: 1.5%;
+    color: #fff;
+    background-color: #0062cc;
+    border: none;
+    cursor: pointer;
+}

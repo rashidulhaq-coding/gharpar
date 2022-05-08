@@ -1,0 +1,118 @@
+{% extends "partials/base.html" %} {% load static %} {% block content %}
+<main class="container-fluid">
+   
+  {% if services %}
+   <a class="my-1 btn btn-primary" href="{% url 'admin_service_add' category.id %}">Create Service</a>
+  <section class="row">
+    {% for service in services %}
+    <div class="col-md-3 col-sm-4 col-12">
+      <div class="card booking-card v-2 mt-2 mb-4 rounded-bottom">
+        <div
+          class="bg-image hover-overlay ripple ripple-surface ripple-surface-light"
+          data-mdb-ripple-color="light"
+        >
+          {% comment %} <img src="{{service.image.url}}" class="img-fluid w-100" /> {% endcomment %}
+          <a href="#!">
+            <div
+              class="mask"
+              style="background-color: rgba(251, 251, 251, 0.15)"
+            ></div>
+          </a>
+        </div>
+        <div class="card-body">
+          <h4 class="card-title font-weight-bold"><a>{{service.name}}</a></h4>
+
+          <p class="card-text">{{service.descriptionn}}.</p>
+          <ul
+            class="list-unstyled d-flex justify-content-between align-items-center mb-0"
+          >
+            <li>Duration</li>
+            <li>
+              <div class="chip ms-3">{{service.duration}}</div>
+            </li>
+          </ul>
+          <ul
+            class="list-unstyled d-flex justify-content-between align-items-center mb-0"
+          >
+            <li>Price</li>
+            <li>
+              <div class="chip ms-3">{{service.price}}</div>
+            </li>
+          </ul>
+          <div class="d-flex justify-content-between">
+            <a
+              href="{% url 'admin_service_edit' service.id %}"
+              class="btn btn-primary btn-sm"
+              >Edit</a
+            >
+            <a
+              href="{% url 'admin_service_delete' service.id %}"
+              class="btn btn-danger btn-sm"
+              >Delete</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% endfor %}
+  {% else %}
+   <a class="my-1 btn btn-primary" href="{% url 'admin_package_create' %}">Create Package</a>
+  <section class="row">
+    {% for package in packages %}
+    <div class="col-md-3 col-sm-4 col-12">
+      <div class="card booking-card v-2 mt-2 mb-4 rounded-bottom">
+        <div
+          class="bg-image hover-overlay ripple ripple-surface ripple-surface-light"
+          data-mdb-ripple-color="light"
+        >
+          {% comment %} <img src="{{service.image.url}}" class="img-fluid w-100" /> {% endcomment %}
+          <a href="#!">
+            <div
+              class="mask"
+              style="background-color: rgba(251, 251, 251, 0.15)"
+            ></div>
+          </a>
+        </div>
+        <div class="card-body">
+          <h4 class="card-title font-weight-bold"><a>{{package.name}}</a></h4>
+
+          <p class="card-text">{{package.descriptionn}}.</p>
+          <ul
+            class="list-unstyled d-flex justify-content-between align-items-center mb-0"
+          >
+            <li>Duration</li>
+            <li>
+              <div class="chip ms-3">{{package.duration}}</div>
+            </li>
+          </ul>
+          <ul
+            class="list-unstyled d-flex justify-content-between align-items-center mb-0"
+          >
+            <li>Price</li>
+            <li>
+              <div class="chip ms-3">{{package.price}}</div>
+            </li>
+          </ul>
+          <div class="d-flex justify-content-between">
+            <a
+              href="{% url 'admin_package_edit' package.id %}"
+              class="btn btn-primary btn-sm"
+              >Edit</a
+            >
+            <a
+              href="{% url 'admin_package_delete' package.id %}"
+              class="btn btn-danger btn-sm"
+              >Delete</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% endfor %}
+
+  {% endif %}
+  </section>
+</main>
+{% endblock %}

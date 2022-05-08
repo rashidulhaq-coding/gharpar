@@ -1,3 +1,4 @@
+from email import message
 from django.shortcuts import render
 from .token import account_activation_token
 from django.http.response import HttpResponse, HttpResponseRedirect
@@ -13,6 +14,7 @@ from .models import Employee, User
 from django.contrib.auth import login
 from django.core.mail import send_mail
 from .restrictions import *
+from django.contrib import messages
 
 # Create your views here.
 def accounts_register(request):
@@ -34,6 +36,7 @@ def accounts_register(request):
                 'token':account_activation_token.make_token(user),
             })
             user.email_user(subject=subject,message=message)
+            messages.success(request, f'Account created successfully. Please check your email to activate your account.')
             return HttpResponse('registered successfully and activation sent.')
     
     else:
@@ -65,10 +68,11 @@ def user_update(request):
         user_form = UserEditForm(request.POST, instance=request.user)
         if user_form.is_valid():
             user_form.save()
+            messages.success(request, f'Your account has been updated!')
             return redirect('accounts:user_update')
     else:
         user_form = UserEditForm(instance=request.user)
-    return render(request, 'core/admin/create_service.html', {'form': user_form})
+    return render(request, 'admin/create_service.html', {'form': user_form,'title':'Update User'})
 
 
 # Employee creation by admin
@@ -98,11 +102,12 @@ def employee_create_view(request):
             employee = employee_form.save(commit=False)
             employee.user = user
             employee.save()
+            messages.success(request, f'Employee created successfully!')
             return redirect('employee_list_view')
     else:
         user_form = Employee_User()
         employee_form = Employee_form()
-    return render(request, 'core/admin/employee_create.html', {'form': user_form, 'employee_form': employee_form})
+    return render(request, 'admin/employee_create.html', {'form': user_form, 'employee_form': employee_form, 'title': 'Create Employee'})
 
 # employee edit view
 @only_admin
@@ -114,26 +119,38 @@ def employee_edit_view(request,id):
         if user_form.is_valid() and employee_form.is_valid():
             user_form.save()
             employee_form.save()
+            messages.success(request, f'Employee updated successfully!')
             return redirect('employee_list_view')
     else:
         user_form = Employee_User(instance=user)
         employee_form = Employee_form(instance=user.employee)
-    return render(request, 'core/admin/employee_create.html', {'form': user_form, 'employee_form': employee_form})
+    return render(request, 'admin/employee_create.html', {'form': user_form, 'employee_form': employee_form, 'title': 'Edit '+user.first_name+' '+user.last_name})
 
 # employee delete view
 @only_admin
 def employee_delete_view(request,id):
     user = get_object_or_404(User, id=id)
     employee= get_object_or_404(Employee, user=user)
-    employee.delete()
-    user.delete()
-    return redirect('employee_list_view')
+    if request.method == 'POST':
+        user.is_active = False
+        employee.delete()
+        user.save()
+        messages.success(request, f'Employee deleted successfully!')
+        return redirect('employee_list_view')
+    return render(request, 'admin/delete_view.html', {'delete': user.first_name+' '+user.last_name})
 
+
+# def admin_package_delete(request, pk):
+#     package = get_object_or_404(Package, pk=pk)
+#     if request.method == 'POST':
+#         package.delete()
+#         return redirect('admin_package_view')
+#     return render(request, 'admin/delete_view.html', {'delete': package})
 
 # Employee list view
 @only_admin
 def employee_list_view(request):
     # list of employees
     employees = Employee.objects.all()
-    return render(request, 'core/admin/employee_list.html', {'employees': employees})
+    return render(request, 'admin/employee_list.html', {'employees': employees})
 

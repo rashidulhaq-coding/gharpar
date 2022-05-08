@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 urlpatterns = [
     # Common urls
     path('', home_view, name='home'),
+    path('services/', services_view, name='services'),
     
     path('dashboard/', admin_dashboard, name='admin_dashboard'),
     path('category/', admin_category_view, name='admin_category_view'),
@@ -20,11 +21,13 @@ urlpatterns = [
     path('service/delete/<str:pk>/', admin_service_delete, name='admin_service_delete'),
     path('service/add/<str:pk>', create_service, name='admin_service_add'),
     path('appoitment/', admin_appoitment_view, name='admin_appoitment_view'),
+    path('appointment/<str:name>/', admin_appoitments_list_view, name='admin_appoitment_list_view'),
+    
     path('appointment/status/<int:pk>/', admin_appoitment_status, name='admin_appoitment_status'),
     
     # path('booking/service/<str:pk>/', booking_service, name='booking_service'),
     path('booking/<str:pk>/', booking_employee, name='booking_employee'),
-    path('booking_employee_confirm/<str:pk>/<str:package>/',booking_package, name='booking_employee_confrim'),
+    # path('booking_employee_confirm/<str:pk>/<str:package>/',booking_package, name='booking_employee_confrim'),
     path('validate_employee/', csrf_exempt(validate_employee),name='validate_employee'),
     path("validate_date/", csrf_exempt(validate_date), name="validate_date"),
     path("validate_time/<str:date>",csrf_exempt(validate_time), name="validate_time"),
@@ -34,12 +37,11 @@ urlpatterns = [
     
     # employee urls
     path('employee/', employee_dashboard, name='employee_dashboard'),
-    path('employee/appointments/', employee_appointment_view, name='employee_appointment_view'),
+    path('employee/appointments/<str:name>', employee_appointment_view, name='employee_appointment_view'),
     path('employee/timings/', employee_timing_view, name='employee_timing_view'),
     path('employee/timings/create/', employee_timing_create, name='employee_timing_create'),
     path('employee/timings/edit/<str:pk>',employee_timing_edit, name='employee_timing_edit'),
     path('employee/timings/delete/<str:pk>',employee_timing_delete, name='employee_timing_delete'),
-    
     
     
     

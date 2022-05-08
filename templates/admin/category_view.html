@@ -1,0 +1,45 @@
+{% extends "partials/base.html" %} {% load static %} {% block content %}
+<main class="container-fluid">
+    <a class="my-1 btn btn-primary" href="{% url 'admin_category_create'%}">Create Category</a>
+  <section class="row" style="">
+    {% for category in categories %}
+    <div class="col-md-3 col-sm-4 col-12">
+      <div class="card booking-card v-2 mt-2 mb-4 rounded-bottom">
+        <div
+          class="bg-image hover-overlay ripple ripple-surface ripple-surface-light"
+          data-mdb-ripple-color="light">
+          {% comment %} <img src="{{category.image.url}}" class="img-fluid w-100" /> {% endcomment %}
+          <a href="{% url 'admin_service_view' category.id %}">
+            <div
+              class="mask"
+              style="background-color: rgba(251, 251, 251, 0.15)"></div>
+          </a>
+        </div>
+        <div class="card-body">
+          <h4 class="card-title font-weight-bold"><a>{{category.name}}</a></h4>
+          {% if category.description %}
+          <p class="card-text">{{category.description}}.</p>
+          {% endif %}
+          <div class="d-flex justify-content-between">
+            <a
+              href="{% url 'admin_service_view' category.id %}"
+              class="btn btn-primary"
+              >View</a
+            >
+            <a href="{% url 'admin_category_edit' category.id %}" class="btn"
+              >Edit</a
+            >
+            <a
+              href="{% url 'admin_category_delete' category.id %}"
+              class="btn btn-danger"
+              >Delete</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% endfor %}
+  </section>
+</main>
+{% endblock %}
