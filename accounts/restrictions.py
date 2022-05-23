@@ -10,7 +10,7 @@ def only_admin(function):
                 return function(request, *args, **kwargs)
             else:
                 messages.error(request, 'You are not authorized to access this page')
-                return redirect('/')
+                return redirect('home')
         else:
             messages.error(request, 'You are not authorized to access this page, please login!')
             return redirect('login')
@@ -22,8 +22,10 @@ def only_employee(function):
             if request.user.is_employee:
                 return function(request, *args, **kwargs)
             else:
+                messages.error(request, 'You are not authorized to access this page')
                 return redirect('/')
         else:
+            messages.error(request, 'You are not authorized to access this page, please login!')
             return redirect('login')
     return wrapper
 
@@ -32,5 +34,6 @@ def only_user(function):
         if request.user.is_authenticated and request.user.is_employee == False and request.user.is_superuser == False:
             return function(request, *args, **kwargs)
         else:
+            messages.error(request, 'You are not authorized to access this page, please login!')
             return redirect('login')
     return wrapper

@@ -39,7 +39,7 @@ class Package(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Created by')
     duration = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Duration')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Price')
-    discount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Discount')
+    discount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Discount', default=0)
     image = models.ImageField(verbose_name='Image', upload_to='packages')
     
     def __str__(self):
@@ -48,18 +48,13 @@ class Package(models.Model):
 # Appoitment model 
 
 
-# class OrderItem(models.Model):
-#     user = models.ForeignKey(User,
-#                              on_delete=models.CASCADE)
-#     ordered = models.BooleanField(default=False)
-#     item = models.ForeignKey(Service, on_delete=models.CASCADE)
+class OrderService(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    ordered = models.BooleanField(default=False)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
 
-#     def __str__(self):
-#         return f"{self.user} ordered {self.item.name}"
-
-#     def get_total_item_price(self):
-#         return self.quantity * self.item.price
-
+    def __str__(self):
+        return f"{self.user} ordered {self.service.name}"
 
 class Appointment(models.Model):
     OPTIONS = (
@@ -71,7 +66,7 @@ class Appointment(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name='Employee',default=2)
     customer = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Customer')
     package = models.ForeignKey(Package, on_delete=models.CASCADE, verbose_name='Package', blank=True, null=True)
-    service = models.ForeignKey(Service, on_delete=models.CASCADE, verbose_name='Service', blank=True, null=True)
+    service = models.ManyToManyField(Service, verbose_name='Service', blank=True)
     status  = models.CharField(max_length=100,choices= OPTIONS,verbose_name='Status', default='Pending')
     date = models .DateField(verbose_name='Date')
     start_time = models.TimeField(verbose_name='Start Time')

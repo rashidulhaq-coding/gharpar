@@ -6,7 +6,10 @@ urlpatterns = [
     # Common urls
     path('', home_view, name='home'),
     path('services/', services_view, name='services'),
-    
+    path('services/book/<int:pk>',
+         service_booking_view, name='book_service'),
+    path('cart/', cart_view, name='cart'),
+    path('cart/delete/<int:pk>', cart_delete, name='cart_delete'),
     path('dashboard/', admin_dashboard, name='admin_dashboard'),
     path('category/', admin_category_view, name='admin_category_view'),
     path('category/create/', admin_category_create, name='admin_category_create'),
@@ -25,7 +28,7 @@ urlpatterns = [
     
     path('appointment/status/<int:pk>/', admin_appoitment_status, name='admin_appoitment_status'),
     
-    # path('booking/service/<str:pk>/', booking_service, name='booking_service'),
+    path('booking/services', booking_services, name='booking_services'),
     path('booking/<str:pk>/', booking_employee, name='booking_employee'),
     # path('booking_employee_confirm/<str:pk>/<str:package>/',booking_package, name='booking_employee_confrim'),
     path('validate_employee/', csrf_exempt(validate_employee),name='validate_employee'),
@@ -33,6 +36,10 @@ urlpatterns = [
     path("validate_time/<str:date>",csrf_exempt(validate_time), name="validate_time"),
     # user dashboard
     path('user/dashboard/', user_dashboard, name='user_dashboard'),
+    path('user/appoitment/<str:name>/',
+         user_appointments, name='user_appoitment_view'),
+    path('user/appointment/<int:pk>/',edit_booking, name='edit_booking'),
+    
     
     
     # employee urls

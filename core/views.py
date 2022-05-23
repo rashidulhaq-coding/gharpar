@@ -12,7 +12,7 @@ from accounts.forms import Timing_form
 from accounts.models import *
 from django.forms import formset_factory
 
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from accounts.restrictions import *
 from django.contrib import messages
 # Admin views
@@ -176,7 +176,6 @@ def admin_package_create(request):
             package.price = float(price) - (float(price)
                                             * float(discount) / 100)
             package.image = services[0].image
-            print(price)
             package.save()
             messages.success(request, 'Package created successfully')
             return redirect('admin_package_view')
@@ -413,7 +412,63 @@ def services_view(request):
         'services': services,
     }
     return render(request, 'core/services.html', context)
-        
+
+@only_user
+def service_booking_view(request, pk):
+    service = Service.objects.get(pk=pk)
+    user = request.user
+    order_service = OrderService.objects.filter(
+        user=user, service=service, ordered=False)
+    if order_service.exists():
+        messages.error(request, 'Service is already booked')
+        return redirect('services')
+    else:
+        order_service = OrderService.objects.create(user= user,service=service)
+        services_by_user = OrderService.objects.filter(user=request.user)
+        messages.success(request, 'Service is booked')
+        return redirect('services')
+
+
+@only_user
+def cart_view(request):
+    order_services = OrderService.objects.filter(user=request.user, ordered=False)
+    total_price = 0
+    total_duration = 0
+    for order_service in order_services:
+        # calculate total price and time
+        total_price += order_service.service.price  
+        total_duration += order_service.service.duration
+    
+    return render(request, 'core/cart.html', {'order_services': order_services, 'total_price': total_price, 'total_duration': total_duration})
+
+
+@only_user
+def cart_delete(request, pk):
+    order = OrderService.objects.get(pk=pk)
+    order.delete()
+    return redirect('cart')
+
+
+@only_user
+def booking_services(request):
+    order_services= OrderService.objects.filter(user=request.user, ordered=False)
+    
+    duration = 0
+    price = 0
+    for order in order_services:
+        duration += order.service.duration
+        price += order.service.price
+    package = Package.objects.create(
+        duration=duration, price=price, created_by=request.user)
+    for order in order_services:
+        package.services.add(order.service)
+    package.save()
+    order_services.update(ordered=True)
+    order_services.delete()
+    return redirect('booking_employee', pk=package.pk)
+
+# @only_user
+
 
 @only_user
 def booking_employee(request, pk):
@@ -441,35 +496,40 @@ def booking_employee(request, pk):
         booking = Appointment(employee=employee, customer=customer, package=package, date=date,
                               start_time=str(start_date), end_time=str(end_date))
         booking.save()
-        return redirect('home')
+        messages.success(request, 'Booking is successful')
+        return redirect('cart')
     context = {
         'package': package.id,
         'employees': employees,
     }
-    return render(request, 'core/user/booking_employee.html', context)
+    return render(request, 'core/booking_employee.html', context)
 
 
-@only_user
+# @only_user
 def validate_employee(request):
     username = request.POST.get('employee', None)
     holiday = Holiday.objects.all()
     holiday_dates = []
     for i in holiday:
-        holiday_dates.append(i.date)
+        date= i.holiday_date.strftime("%Y/%m/%d")
+        holiday_dates.append(date)
+        # convert date to y/m/d format
+        print(date)
     data = {
         'is_taken': Employee.objects.filter(id=username).exists(),
         'holidays': holiday_dates
     }
+    print(data['holidays'])
     return JsonResponse(data)
 
 
-@only_user
+# @only_user
 def validate_date(request):
     date = request.POST.get('date', None)
     holiday = Holiday.objects.filter(holiday_date=date).exists()
-    print(date)
+    
     dat = date.split('-')
-    day = int(dat[2])+1
+    day = int(dat[2])
     date = dat[0]+'-'+dat[1]+'-'+str(day)
     if holiday:
         data = {
@@ -478,10 +538,13 @@ def validate_date(request):
         }
         return JsonResponse(data)
     else:
+        # print('date is ',date)
         appointments = Appointment.objects.filter(date=date)
+        print(appointments)
         times = Timing.objects.all()
         available_times = []
-        if appointments:
+        if appointments.exists():
+            
             for time in times:
                 for apointment in appointments:
                     if apointment.start_time == time.time_slot:
@@ -489,10 +552,11 @@ def validate_date(request):
                     elif time.time_slot > apointment.start_time and time.time_slot < apointment.end_time:
                         pass
                     else:
-                        available_times.append(time)
+                        available_times.append(time.time_slot)
         else:
             for time in times:
                 available_times.append(time.time_slot)
+        print(available_times)
         data = {
             'is_taken': False,
             'times': available_times,
@@ -500,7 +564,7 @@ def validate_date(request):
         return JsonResponse(data)
 
 
-@only_user
+# @only_user
 def validate_time(request, date):
     time = request.POST.get('time', None)
     data = {
@@ -550,18 +614,49 @@ def validate_time(request, date):
 @only_user
 def user_dashboard(request):
     appointments = Appointment.objects.filter(customer=request.user)
-    pending = appointments.filter(status='Pending')
-    completed = appointments.filter(status='Completed')
-    confirmed = appointments.filter(status='Confirmed')
+    pending = appointments.filter(status='Pending').count()
+    completed = appointments.filter(status='Completed').count()
+    confirmed = appointments.filter(status='Confirmed').count()
 
-    return render(request, 'core/user/user_dashboard.html', {'appointments': appointments, 'pending': pending, 'completed': completed, 'confirmed': confirmed})
+    return render(request, 'user/user_dashboard.html', {'appointments': appointments.count(), 'pending': pending, 'completed': completed, 'confirmed': confirmed})
 
+
+@only_user
+def user_appointments(request,name):
+    appointments = Appointment.objects.filter(customer=request.user)
+    
+    if name == 'pending':
+        cancelled = appointments.filter(status='Cancelled')
+        pending = appointments.filter(status='Pending')
+        context = {
+            'cancelled': cancelled,
+            'pending': pending,
+        }
+    elif name == 'completed':
+        completed = appointments.filter(status='Completed')
+        context = {
+            'completed': completed,
+        }
+    else:
+        confirmed = appointments.filter(status='Confirmed')
+        context = {
+            'confirmed': confirmed,
+        }
+    return render(request, 'user/appointment_view.html', context)
+        
+
+@only_user
 def edit_booking(request, pk):
     appointment = get_object_or_404(Appointment, pk=pk)
-    if request.method == 'POST':
-        # booking_package(request, appointment.employee.id, appointment.package.id)
-        return redirect('user_dashboard')
-    return render(request, 'core/user/edit_booking.html', {'appointment': appointment})
+    package = appointment.package
+    package_id = package.id
+    appointment.delete()
+    return redirect(booking_employee, pk=package_id)
+
+    # if request.method == 'POST':
+    #     # booking_package(request, appointment.employee.id, appointment.package.id)
+    #     return redirect('user_dashboard')
+    # return render(request, 'core/user/edit_booking.html', {'appointment': appointment})
 
 # def cancel_booking(request, pk):
 #     appointment = get_object_or_404(Appointment, pk=pk)

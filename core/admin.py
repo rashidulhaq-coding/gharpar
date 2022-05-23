@@ -1,9 +1,11 @@
 from django.contrib import admin
-from .models import Category, Service, Package, Appointment
+from .models import Category, Service, Package, Appointment, OrderService
 
 admin.site.register(Category)
 admin.site.register(Service)
+
 admin.site.register(Package)
+admin.site.register(OrderService)
 admin.site.register(Appointment)
 
 # filter by category

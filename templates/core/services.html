@@ -15,6 +15,17 @@
   </div>
   <div class="container">
     <div class="m-auto" style="width: 90%;">
+    {% if messages %}
+          {% for message in messages %}
+          <div
+            class="alert {{ message.tags }} alert-dismissible fade show"
+            role="alert"
+          >
+          {{ message| capfirst }}
+           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% endfor %}
+          {% endif %}
       <div class="row g-3">
       {% for service in services %}
       {% if service.services %}
@@ -27,7 +38,9 @@
             <div class="card-body">
               <h4 class="card-title fs-5">{{s}}</h4>
               <p class="card-text p-y-1 text-black-50">{{s.duration}} ${{s.price}}</p>
-              <a href="#" class="btn btn-outline-primary">Book</a>
+              {% comment %} hiddent element with id of service {% endcomment %}
+              {% comment %} <input type="hidden" name="service_id" value="{{s.id}}"> {% endcomment %}
+              <a id="book_service" href="{% url 'book_service' s.id %}"  class="btn btn-outline-primary">Book</a>
             </div>
           </div>
         </div>
@@ -72,5 +85,7 @@
       }
     })
   </script>
-
+  <script>
+    
+</script>
 {% endblock content %}
