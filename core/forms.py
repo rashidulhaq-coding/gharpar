@@ -172,3 +172,22 @@ class Appointment_Form(forms.ModelForm):
                 }
             ),
         }
+
+class ReviewForm(forms.ModelForm):
+
+    class Meta:
+        model = Review
+        fields = ["stars","comment"]
+        widgets = {
+            'stars': forms.Select(
+                attrs={
+                    'class': 'form-control mb-3', 'placeholder':'stars',
+                }
+            ),
+            'comment': forms.Textarea(
+                attrs={
+                    'placeholder': 'Comments',
+                    'class': 'form-control mb-3',
+                }
+            )
+        }

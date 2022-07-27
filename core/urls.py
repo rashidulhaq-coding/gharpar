@@ -6,6 +6,8 @@ urlpatterns = [
     # Common urls
     path('', home_view, name='home'),
     path('services/', services_view, name='services'),
+    path('about/',about_view, name='about'),
+    path('contact/',contact_view, name='contact'),
     path('services/book/<int:pk>',
          service_booking_view, name='book_service'),
     path('cart/', cart_view, name='cart'),
@@ -25,8 +27,9 @@ urlpatterns = [
     path('service/add/<str:pk>', create_service, name='admin_service_add'),
     path('appoitment/', admin_appoitment_view, name='admin_appoitment_view'),
     path('appointment/<str:name>/', admin_appoitments_list_view, name='admin_appoitment_list_view'),
-    
     path('appointment/status/<int:pk>/', admin_appoitment_status, name='admin_appoitment_status'),
+    path('leaves/',leave_request, name='leaves'),
+    
     
     path('booking/services', booking_services, name='booking_services'),
     path('booking/<str:pk>/', booking_employee, name='booking_employee'),
@@ -39,6 +42,7 @@ urlpatterns = [
     path('user/appoitment/<str:name>/',
          user_appointments, name='user_appoitment_view'),
     path('user/appointment/<int:pk>/',edit_booking, name='edit_booking'),
+    path('rate/<int:id>', rate, name="rate"),
     
     
     
@@ -49,6 +53,12 @@ urlpatterns = [
     path('employee/timings/create/', employee_timing_create, name='employee_timing_create'),
     path('employee/timings/edit/<str:pk>',employee_timing_edit, name='employee_timing_edit'),
     path('employee/timings/delete/<str:pk>',employee_timing_delete, name='employee_timing_delete'),
+    
+    
+    path('holiday/', employee_holiday_view, name='holiday'),
+    path('holiday_create/', create_leave, name='holiday_create'),
+    path('leave_status/<str:id>', leave_status, name='leave_status'),
+    path('holiday/delete/<str:id>', leave_delete, name='holiday_delete'),
     
     
     

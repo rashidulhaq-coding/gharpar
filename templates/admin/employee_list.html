@@ -22,7 +22,7 @@
             <td>
               <div class="d-flex align-items-center">
                 {% if employee.user.image %}
-                <img class="rounded-circle" src="{{employee.user.image.url}}" width="30">
+                <img class="rounded-circle" src="{{employee.user.image.url}}" width="30" height="30">
                 {% endif %}
                 <span class="ml-2">{{employee.user.first_name}} {{employee.user.last_name}}</span>
               </div>

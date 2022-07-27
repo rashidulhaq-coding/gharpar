@@ -1,0 +1,14 @@
+{% extends "partials/base.html" %} {% load static %} {% block content %}
+<main class="container-fluid">
+<section class="row" style="">
+  <div class="col-8 mx-auto">
+  {% comment %} <h3>{{title}}</h3> {% endcomment %}
+  <form action="" method="post" enctype='multipart/form-data'>
+  {% csrf_token %}
+  {{form.as_p}}
+    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+  </form>
+  </div>
+  </section>
+</main>
+{% endblock %}

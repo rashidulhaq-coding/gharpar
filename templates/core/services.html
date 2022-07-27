@@ -37,7 +37,7 @@
           <div class="card bg-white shadow-lg border-0">
             <div class="card-body">
               <h4 class="card-title fs-5">{{s}}</h4>
-              <p class="card-text p-y-1 text-black-50">{{s.duration}} ${{s.price}}</p>
+              <p class="card-text p-y-1 text-black-50">{{s.duration}}min ${{s.price}}</p>
               {% comment %} hiddent element with id of service {% endcomment %}
               {% comment %} <input type="hidden" name="service_id" value="{{s.id}}"> {% endcomment %}
               <a id="book_service" href="{% url 'book_service' s.id %}"  class="btn btn-outline-primary">Book</a>

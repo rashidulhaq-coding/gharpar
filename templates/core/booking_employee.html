@@ -22,6 +22,7 @@
     $("#datetimepicker").addClass('d-none');
       $("#time-label").addClass('d-none');
       $("#id_time").addClass('d-none');
+
     var employee = $(this).val();
     $.ajax({
       url: '/validate_employee/',
@@ -81,7 +82,7 @@
         <label for="id_time"  id="time-label" class="d-none">Time</label>
         <select class="form-control d-none" name="time" id="id_time"></select>
       </div>
-      <button type="submit" class="btn btn-primary w-100 mt-2">book now</button>
+      <button type="submit" class="btn btn-primary w-100 mt-2 d-none" id="book">book now</button>
     </form>
   </div>
             </div>
@@ -146,22 +147,23 @@ $("#datetimepicker").on('change', function() {
       $("#id_time").addClass('d-none');
      var picker = $(this).val();
       var date = $('#date').val();
+      var employee= $('#id_employee').val();
       date = picker.split(' ')[0];
       date = new Date(date).toISOString().slice(0, 10);
       
        $('#date').val(date);
       $('#datetimepicker').val(date);
-      console.log(date)
       $.ajax({
         url: '/validate_date/',
         data: {
-          'date': date
+          'date': date,
+          'employee':employee,
         },
         method: 'POST',
         dataType: 'json',
         success: function (data) {
           if (data.is_taken) {
-            alert("This is holiday.");
+            alert("The employee is on "+data.holiday);
             $('#datetimepicker').val('');
           }
           else{
@@ -170,13 +172,10 @@ $("#datetimepicker").on('change', function() {
         $("#id_time").removeClass('d-none');
         
       $('#id_time').removeAttr("disabled");
+      $('#book').removeClass('d-none');
       }, 500);
             var time = $('#id_time')
             time.empty();
-            time.append($('<option>', {
-              value: "",
-              text: "Select Time"
-            }));
             for (var i = 0; i < data.times.length; i++) {
               var time_str = data.times[i];
               var time_arr = time_str.split(':');

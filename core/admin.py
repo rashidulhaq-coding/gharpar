@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Service, Package, Appointment, OrderService
+from .models import Category, Service, Package, Appointment, OrderService,Review
 
 admin.site.register(Category)
 admin.site.register(Service)
@@ -7,8 +7,7 @@ admin.site.register(Service)
 admin.site.register(Package)
 admin.site.register(OrderService)
 admin.site.register(Appointment)
-
-# filter by category
+admin.site.register(Review)
 
 
 admin.site.site_header = 'Salon Admin'

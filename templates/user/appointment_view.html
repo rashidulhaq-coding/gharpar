@@ -181,7 +181,11 @@
               </div>
             </td>
             <td>{{booking.customer.email}}<br></td>
-            <td class="font-weight-bold">{{booking.service.name}} {{booking.package.name}}</td>
+            <td>
+            {% for service in booking.package.services.all %}
+            {{service.name}}
+            {% endfor %} 
+            </td>
             <td>{{booking.employee}}</td>
             <td>{{booking.date}}</td>
             <td>
@@ -191,10 +195,10 @@
             {{booking.end_time}}
             </td>
             <td>
-              <a href="{% url 'admin_appoitment_status' booking.id %}">
+            <a href="{% url 'rate' booking.id %}">
                 <i class="bi bi-pencil-fill text-primary"></i>
-            </td>
             </a>
+            </td>
           </tr>
           {% endfor %}
 
@@ -208,7 +212,6 @@
     <a href="{% url 'services' %}" class="btn btn-primary">
       <i class="bi bi-plus"></i>
       Add Appointment
-
     </a>
     {% endif %}
   </div>

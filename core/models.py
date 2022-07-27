@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 from accounts.models import User
 from accounts.models import Employee
@@ -80,3 +81,21 @@ class Appointment(models.Model):
     
     def __str__(self):
         return self.customer.first_name + ' ' + self.customer.last_name
+
+
+class Review(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    review_date = models.DateTimeField(default=timezone.now())
+    rate_choices = (
+        (1, 1),
+        (2, 2),
+        (3, 3),
+        (4, 4),
+        (5, 5)
+    )
+    stars = models.IntegerField(choices=rate_choices)
+    comment = models.TextField(max_length=4000,null=True,blank=True)
+    appointment = models.OneToOneField(Appointment, on_delete=models.CASCADE,related_name="appointments_review")
+
+    def __str__(self):
+        return str(self.appointment.date) + ' - ' + self.appointment.employee.user.first_name

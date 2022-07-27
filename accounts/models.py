@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .manager import UserManager
@@ -61,10 +62,23 @@ class Timing(models.Model):
     def __str__(self):
         #return self.employee.user.first_name + ' ' + self.shift.name + ' ' + self.time_slot.strftime('%H:%M')
         return self.time_slot.strftime('%H:%M')
-    
+
+
 
 class Holiday(models.Model):
-    holiday_date = models.DateField()
-    description = models.CharField(max_length=100)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False,null=True, blank=True)
+    CHOICES= (
+        ('Accepted', 'Accepted'),
+        ('Rejected', 'Rejected'),
+        ('Pending', 'Pending'),
+        )
+    created_by = models.ForeignKey(
+        User, related_name='Holiday', null=True, blank=True,on_delete=models.SET_NULL)
+    date = models.DateField()
+    holiday = models.BooleanField(default=False, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    accepted = models.CharField(choices=CHOICES,default='Pending', max_length=100,null=True, blank=True)
+    image = models.ImageField(upload_to="holiday_pictures", blank=True, null=True)
+    
     def __str__(self):
-        return self.holiday_date.strftime('%Y-%m-%d') + ' ' + self.description
+        return str(self.created_by) + ' ' + self.date.strftime('%Y-%m-%d')

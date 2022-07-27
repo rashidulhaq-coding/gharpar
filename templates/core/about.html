@@ -1,59 +1,6 @@
-<!doctype html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css">
-    <link rel="stylesheet" href="css/home.css">
-
-    <title>Gharpar</title>
-</head>
-
-<body>
-
-
-    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-white py-3 shadow-sm">
-        <div class="container">
-            <a class="navbar-brand display-7 text-primary fw-bold" href="#">Gharpar</a>
-            <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link text-primary display-4 fw-bold" aria-current="page"
-                            href="index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-primary display-4 fw-bold" href="services.html">Services</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-primary display-4 fw-bold" href="#" tabindex="-1"
-                            aria-disabled="true">About Us</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link text-primary display-4 fw-bold" href="#">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-primary display-4 fw-bold" href="#">Sign Up</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+{% extends "core/core_base.html" %}
+{% load static %}
+{% block content %}
 
     <div class="container pt-5 mt-5">
         <div class="py-5">
@@ -63,107 +10,58 @@
                 </div>
             </div>
             <div class="row ">
-
-                <!-- Team item-->
+            
+            {% for employee in employees %}
                 <div class="col-md-4 col-sm-6 mb-5">
                     <div class="bg-white rounded shadow-sm py-5 px-4"><img
-                            src="https://bootstrapious.com/i/snippets/sn-about/avatar-3.png" alt="" width="100"
+                            src="{{employee.user.image.url}}" alt="" style="width:100px;height:100px;object-fit:cover;"
                             class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
-                        <h5 class="mb-0">Samuel Hardy</h5><span class="small text-uppercase text-muted">CEO -
-                            Founder</span>
+                        <h5 class="mb-0">{{employee.user.first_name|title}} {{employee.user.last_name|title}}</h5><span class="small text-uppercase text-muted">
+                        {{employee.position}}</span>
                         <ul class="social mb-0 list-inline mt-3">
-                            <li class="list-inline-item"><a href="#" class="social-link"><i class="bi-facebook"></i></a>
+                            <li class="list-inline-item"><a href="https://web.facebook.com/" target="_blank" class="social-link"><i class="bi-facebook">
+                            
+                            </i></a>
                             </li>
-                            <li class="list-inline-item"><a href="#" class="social-link"><i class="bi-twitter"></i></a>
+                            <li class="list-inline-item"><a href="https://twitter.com/" target="_blank"  class="social-link"><i class="bi-twitter"></i></a>
                             </li>
-                            <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="bi-instagram"></i></a></li>
-                            <li class="list-inline-item"><a href="#" class="social-link"><i class="bi-linkedin"></i></a>
-                            </li>
+                            
                         </ul>
                     </div>
                 </div>
-                <!-- End-->
-
-                <!-- Team item-->
-                <div class="col-md-4 col-sm-6 mb-5">
-                    <div class="bg-white rounded shadow-sm py-5 px-4"><img
-                            src="https://bootstrapious.com/i/snippets/sn-about/avatar-2.png" alt="" width="100"
-                            class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
-                        <h5 class="mb-0">Tom Sunderland</h5><span class="small text-uppercase text-muted">CEO -
-                            Founder</span>
-                        <ul class="social mb-0 list-inline mt-3">
-                            <li class="list-inline-item"><a href="#" class="social-link"><i class="bi-facebook"></i></a>
-                            </li>
-                            <li class="list-inline-item"><a href="#" class="social-link"><i class="bi-twitter"></i></a>
-                            </li>
-                            <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="bi-instagram"></i></a></li>
-                            <li class="list-inline-item"><a href="#" class="social-link"><i class="bi-linkedin"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <!-- End-->
-
-                <!-- Team item-->
-                <div class="col-md-4 col-sm-6 mb-5">
-                    <div class="bg-white rounded shadow-sm py-5 px-4"><img
-                            src="https://bootstrapious.com/i/snippets/sn-about/avatar-1.png" alt="" width="100"
-                            class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
-                        <h5 class="mb-0">John Tarly</h5><span class="small text-uppercase text-muted">CEO -
-                            Founder</span>
-                        <ul class="social mb-0 list-inline mt-3">
-                            <li class="list-inline-item"><a href="#" class="social-link"><i class="bi-facebook"></i></a>
-                            </li>
-                            <li class="list-inline-item"><a href="#" class="social-link"><i class="bi-twitter"></i></a>
-                            </li>
-                            <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="bi-instagram"></i></a></li>
-                            <li class="list-inline-item"><a href="#" class="social-link"><i class="bi-linkedin"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
+            {% endfor %}
             </div>
 
         </div>
     </div>
-
-
 <div class="container contact-form">
             <div class="contact-image">
                 <img src="https://image.ibb.co/kUagtU/rocket_contact.png" alt="rocket_contact"/>
             </div>
-            <form method="post">
+            <form method="post" action="{% url 'contact' %}">
+            {% csrf_token %}
                 <h3>Drop Us a Message</h3>
                <div class="row">
                     <div class="col-md-6">
                         <div class="my-2">
-                            <input type="text" name="txtName" class="form-control" placeholder="Your Name *" value="" />
+                            <input type="text" name="name" class="form-control" placeholder="Your Name *" />
                         </div>
                         <div class="my-2">
-                            <input type="text" name="txtEmail" class="form-control" placeholder="Your Email *" value="" />
+                            <input type="text" name="email" class="form-control" placeholder="Your Email *"/>
                         </div>
                         <div class="my-2">
-                            <input type="text" name="txtPhone" class="form-control" placeholder="Your Phone Number *" value="" />
+                            <input type="text" name="phone" class="form-control" placeholder="Your Phone Number *" />
                         </div>
                         <div class="my-2">
-                            <input type="submit" name="btnSubmit" class="btnContact" value="Send Message" />
+                            <input type="submit" name="btnSubmit" class="btnContact bg-primary block w-100 p-2" value="Send Message" />
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <textarea name="txtMsg" class="form-control" placeholder="Your Message *" style="width: 100%; height: 150px;"></textarea>
+                            <textarea name="msg" class="form-control my-2" placeholder="Your Message *" style="width: 100%; height: 170px;"></textarea>
                         </div>
                     </div>
                 </div>
             </form>
 </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
-</body>
-
-</html>
+{% endblock %}

@@ -1,23 +1,21 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from core.forms import Service_Form
+from django.utils import timezone
+from django.forms import formset_factory
+from django.http import HttpResponse, JsonResponse
+from django.contrib import messages
+from datetime import date, datetime, timedelta
+import datetime
+from django.core.mail import send_mail
+
 from .models import *
 from .forms import *
-from django.utils import timezone
-# import datetime
-from datetime import datetime, timedelta
-# import timedelta
+from core.forms import Service_Form
 
-from accounts.forms import Timing_form
-from accounts.models import *
-from django.forms import formset_factory
-
-from django.http import HttpResponse, JsonResponse
 from accounts.restrictions import *
-from django.contrib import messages
+from accounts.forms import Timing_form, Employee_Holiday, Leave_Status_Form
+from accounts.models import *
 # Admin views
-
-
 @only_admin
 def admin_dashboard(request):
     appointments = Appointment.objects.all()
@@ -276,6 +274,112 @@ def admin_appoitment_status(request, pk):
         form = Appointment_Form(instance=appointment)
     return render(request, 'admin/create_service.html', {'form': form,'title':'Change Status'})
 
+
+@only_admin
+def employee_timing_view(request):
+    timing = Timing.objects.all()
+    shifts = Shift.objects.all()
+    context = {
+        'timing': timing,
+        'shifts': shifts,
+    }
+    return render(request, 'employee/timing_view.html', context)
+
+
+@only_admin
+def employee_timing_create(request):
+
+    if request.method == 'POST':
+        shift = Shift.objects.get(pk=request.POST['shift'])
+        time = request.POST['time']
+        time = datetime.datetime.strptime(time, '%H:%M').time()
+        start_time = shift.start_time
+        end_time = shift.end_time
+        forms = Timing_form(request.POST)
+        if forms.is_valid():
+            timing = forms.save(commit=False)
+            # timing.employee = request.user.employee
+            if time > start_time and time < end_time:
+                timing.time_slot = time
+                timing.shift = shift
+                timing.save()
+                return redirect('employee_timing_view')
+            else:
+                messages.error(request, 'Time slot is not in shift time')
+                return redirect('employee_timing_create')
+    else:
+        forms = Timing_form()
+
+    return render(request, 'employee/create_timing.html', {'forms': forms, 'shifts': Shift.objects.all(), 'title': 'Create Timing'})
+
+
+@only_admin
+def employee_timing_edit(request, pk):
+
+    timing = Timing.objects.get(pk=pk)
+    if request.method == 'POST':
+        forms = Timing_form(request.POST, instance=timing)
+        shift = Shift.objects.get(pk=request.POST['shift'])
+        time = request.POST['time']
+        time = datetime.strptime(time, '%H:%M').time()
+        start_time = shift.start_time
+        end_time = shift.end_time
+        if forms.is_valid():
+            timing = forms.save(commit=False)
+            # timing.employee = request.user.employee
+            if time > start_time and time < end_time:
+                timing.time_slot = time
+                # timing.shift = shift
+                timing.save()
+                return redirect('employee_timing_view')
+    else:
+        forms = Timing_form(instance=timing)
+    return render(request, 'employee/create_timing.html', {'forms': forms, 'shifts': Shift.objects.all()})
+
+
+@only_admin
+def employee_timing_delete(request, pk):
+    timing = Timing.objects.get(pk=pk)
+    if request.method == 'POST':
+        timing.delete()
+        return redirect('employee_timing_view')
+    return render(request, 'admin/delete_view.html', {'delete': timing.time_slot})
+
+def leave_request(request):
+    today = datetime.datetime.today()
+    last_30_days = datetime.datetime.now() - datetime.timedelta(days=30)
+    leaves = Holiday.objects.filter(holiday=False,accepted='Pending',date__gte=today)
+    rejected = Holiday.objects.filter(holiday=False,accepted='Rejected',date__gte=last_30_days)
+    accepted = Holiday.objects.filter(holiday=False,accepted='Accepted',date__gte=last_30_days)
+    pending = Holiday.objects.filter(holiday=False,accepted='Pending',date__gte=last_30_days)
+    context = {'holidays': leaves,
+               'accepted': accepted,
+               'rejected': rejected,
+               }
+    return render(request, 'admin/leave.html', context)
+
+
+def leave_status(request, id):
+    leave = get_object_or_404(Holiday, uuid=id)
+    if request.method == 'POST':
+        form = Leave_Status_Form(request.POST, instance=leave)
+        if form.is_valid():
+            leave = form.save(commit=False)
+            leave.save()
+            messages.success(
+                request, "Leave status changed to "+leave.accepted)
+            return redirect('holiday')
+    else:
+        form = Leave_Status_Form(instance=leave)
+    return render(request, 'admin/create_service.html', {'form': form, 'title': 'Change Status of Leave'})
+
+def leave_delete(request, id):
+    leave = get_object_or_404(Holiday, uuid=id)
+    if request.method == 'POST':
+        leave.delete()
+        messages.warning(request, leave+' deleted successfully')
+        return redirect('holiday')
+    return render(request, 'admin/delete_view.html', {'delete': leave})
 # employee view
 
 
@@ -315,76 +419,53 @@ def employee_appointment_view(request,name):
 
 # timing set up by employee
 
+def employee_holiday_view(request):
+    user = request.user
+    
+    if user.is_authenticated:
+        if user.is_employee:
+            holidays = Holiday.objects.filter(created_by = user).order_by('-date')
+            context ={
+                'holidays': holidays,
+            }
+        elif user.is_superuser:
+            holidays = Holiday.objects.filter(
+                created_by=user).order_by('-date')
+            context = {
+                'holidays': holidays,
+            }
+    else:
+        messages.error(request,'You do not have permission to view a holiday')
+    return render(request, 'employee/holiday.html', context)
 
-@only_employee
-def employee_timing_view(request):
-    timing = Timing.objects.all()
-    shifts = Shift.objects.all()
-    context = {
-        'timing': timing,
-        'shifts': shifts,
-    }
-    return render(request, 'employee/timing_view.html', context)
 
 
-@only_employee
-def employee_timing_create(request):
-
+def create_leave(request):
+    user = request.user
     if request.method == 'POST':
-        shift = Shift.objects.get(pk=request.POST['shift'])
-        time = request.POST['time']
-        time = datetime.strptime(time, '%H:%M').time()
-        start_time = shift.start_time
-        end_time = shift.end_time
-        forms = Timing_form(request.POST)
-        if forms.is_valid():
-            timing = forms.save(commit=False)
-            # timing.employee = request.user.employee
-            if time > start_time and time < end_time:
-                timing.time_slot = time
-                timing.shift = shift
-                timing.save()
-                return redirect('employee_timing_view')
+        form = Employee_Holiday(request.POST, request.FILES)
+        if form.is_valid():
+            date = form.cleaned_data['date']
+            description= form.cleaned_data['description']
+            image = form.cleaned_data['image']
+            created_by =get_object_or_404(User, pk=request.user.id)
+            holiday = False
+            accepted = 'Pending'
+            if user.is_superuser:
+                holiday = True
+                accepted = 'Accepted'
+            holiday_exist = Holiday.objects.filter(date=date)
+            if holiday_exist:
+                messages.warning(request, "It already exists.")
+                return redirect('holiday_create')
             else:
-                messages.error(request, 'Time slot is not in shift time')
-                return redirect('employee_timing_create')
+                Holiday.objects.create(created_by=created_by,date=date,holiday=holiday,description=description,accepted=accepted)
+                return redirect('holiday')
     else:
-        forms = Timing_form()
-
-    return render(request, 'employee/create_timing.html', {'forms': forms, 'shifts': Shift.objects.all(), 'title': 'Create Timing'})
-
-
-@only_employee
-def employee_timing_edit(request, pk):
-
-    timing = Timing.objects.get(pk=pk)
-    if request.method == 'POST':
-        forms = Timing_form(request.POST, instance=timing)
-        shift = Shift.objects.get(pk=request.POST['shift'])
-        time = request.POST['time']
-        time = datetime.strptime(time, '%H:%M').time()
-        start_time = shift.start_time
-        end_time = shift.end_time
-        if forms.is_valid():
-            timing = forms.save(commit=False)
-            # timing.employee = request.user.employee
-            if time > start_time and time < end_time:
-                timing.time_slot = time
-                # timing.shift = shift
-                timing.save()
-                return redirect('employee_timing_view')
-    else:
-        forms = Timing_form(instance=timing)
-    return render(request, 'employee/create_timing.html', {'forms': forms, 'shifts': Shift.objects.all()})
-
-
-@only_employee
-def employee_timing_delete(request, pk):
-    timing = Timing.objects.get(pk=pk)
-    if request.method == 'POST':
-        timing.delete()
-        return redirect('employee_timing_view')
-    return render(request, 'admin/delete_view.html', {'delete': timing.time_slot})
+        form = Employee_Holiday()
+    
+    return render(request, 'employee/create_holiday.html', {'form': form})
+            
 
 
 # user views
@@ -392,11 +473,25 @@ def home_view(request):
     services = Service.objects.all()[:10]
     packages = Package.objects.all()[:10]
     categories = Category.objects.all()
+    review = Review.objects.all()[:10]
+    # rating_list = []
+    # for rating in review:
+    #     rate = []
+    #     services_list=[]
+    #     # for service in rating.appointment.package.services.all():
+    #     #     services_list.append(service.name)
+    #     services_list = [service.name for service in rating.appointment.package.services.all()]
+    #     l=[rating.author, services_list,
+    #          range(1,rating.stars), rating.comment]
+    #     rate.extend(l)
+    #     rating_list.append(rate)
+    # print(rating_list)
 
     context = {
         'services': services,
         'packages': packages,
         'categories': categories,
+        'rating': review,
     }
     return render(request, 'core/home.html', context)
 
@@ -412,6 +507,31 @@ def services_view(request):
         'services': services,
     }
     return render(request, 'core/services.html', context)
+
+def about_view(request):
+    employees = Employee.objects.all()
+    context = {
+        'employees': employees
+    }
+    return render(request, 'core/about.html', context)
+
+def contact_view(request):
+    if request.method == 'POST':
+        name = request.POST.get('name', None)
+        email = request.POST.get('email', None)
+        phone = request.POST.get('phone', None)
+        msg = request.POST.get('msg', None)
+        send_mail(
+                subject='Client Contact',
+                message="From "+name+"\n"+msg,
+                from_email=email,
+                recipient_list=['admin@gmail.com', ],
+                fail_silently=False,
+        )
+        messages.success(request,"Message sended successfully")
+        return redirect('about')
+    else:
+        return redirect('about')
 
 @only_user
 def service_booking_view(request, pk):
@@ -511,36 +631,42 @@ def validate_employee(request):
     holiday = Holiday.objects.all()
     holiday_dates = []
     for i in holiday:
-        date= i.holiday_date.strftime("%Y/%m/%d")
+        date= i.date.strftime("%Y/%m/%d")
         holiday_dates.append(date)
         # convert date to y/m/d format
-        print(date)
     data = {
         'is_taken': Employee.objects.filter(id=username).exists(),
         'holidays': holiday_dates
     }
-    print(data['holidays'])
     return JsonResponse(data)
 
 
 # @only_user
 def validate_date(request):
     date = request.POST.get('date', None)
-    holiday = Holiday.objects.filter(holiday_date=date).exists()
-    
+    user = request.POST.get('employee', None)
+    holiday = Holiday.objects.filter(date=date).exists()
+    leave = Holiday.objects.filter(created_by=user,date=date,accepted='Accepted').exists()
     dat = date.split('-')
     day = int(dat[2])
     date = dat[0]+'-'+dat[1]+'-'+str(day)
     if holiday:
         data = {
             'is_taken': True,
-            'times': []
+            'times': [],
+            'holiday':'holiday',
+        }
+        return JsonResponse(data)
+    elif leave:
+        data = {
+            'is_taken': True,
+            'times': [],
+            'holiday': 'Leave',
         }
         return JsonResponse(data)
     else:
         # print('date is ',date)
         appointments = Appointment.objects.filter(date=date)
-        print(appointments)
         times = Timing.objects.all()
         available_times = []
         if appointments.exists():
@@ -556,7 +682,6 @@ def validate_date(request):
         else:
             for time in times:
                 available_times.append(time.time_slot)
-        print(available_times)
         data = {
             'is_taken': False,
             'times': available_times,
@@ -571,43 +696,6 @@ def validate_time(request, date):
         'is_taken': Timing.objects.filter(time=time).exists(),
     }
     return JsonResponse(data)
-
-
-# @only_user
-# def booking_package(request, pk, package):
-#     package = get_object_or_404(Package, pk=package)
-#     employee = get_object_or_404(Employee, pk=pk)
-#     if request.method == 'POST':
-#         package = package
-#         customer = request.user
-#         date = request.POST['time']
-#         print(date)
-#         splitting = date.split()
-#         date_only = splitting[0]
-#         time_only = splitting[1]
-#         date_only = date_only.replace('/', '-')
-#         time = time_only
-#         date = date_only
-#         duration = package.duration
-#         t = time.split(':')
-#         h = int(t[0])
-#         minute = int(t[1])
-#         start_date = timedelta(hours=h, minutes=minute)
-#         total_minute = minute + duration
-#         if total_minute > 60:
-#             total_minute = total_minute - 60
-#             h = h + 1
-#         end_date = timedelta(hours=h, minutes=int(total_minute))
-#         booking = Appointment(employee=employee, customer=customer, package=package, date=date,
-#                               start_time=str(start_date), end_time=str(end_date))
-#         print(booking)
-#         booking.save()
-#         return redirect('home')
-#     context = {
-#         'package': package.id,
-#         'employee': employee.id,
-#     }
-#     return render(request, 'core/user/booking_package.html', context)
 
 
 # user dashboard
@@ -664,3 +752,33 @@ def edit_booking(request, pk):
 #         appointment.delete()
 #         return redirect('user_dashboard')
 #     return render(request, 'core/user/cancel_booking.html', {'appointment': appointment})
+
+def rate(request, id):
+    appointment = Appointment.objects.get(id=id)
+    if Review.objects.filter(appointment=appointment).count() > 0:
+        review = get_object_or_404(Review,appointment=appointment)
+        form = ReviewForm(request.POST, instance=review)
+        if form.is_valid():  
+            form.save()
+            return redirect('user_appoitment_view', 'completed')
+        form = ReviewForm(instance=review)
+        context = {
+            "form":form,
+            "title":"Review",
+        }
+        return render(request, 'admin/create_service.html', context)
+    else:
+        form = ReviewForm(request.POST or None)
+        if form.is_valid():
+            author = request.user
+            stars = request.POST.get('stars')
+            comment = request.POST.get('comment')
+            review = Review(author=author, stars = stars,  comment=comment , appointment=appointment)
+            review.save()
+            return redirect('user_appoitment_view','completed')
+        form = ReviewForm()
+        context = {
+                "form":form,
+                "title":"Review",
+            }
+        return render(request, 'admin/create_service.html',context)

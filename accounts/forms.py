@@ -1,3 +1,4 @@
+from pydoc import describe
 from django import forms
 from .models import *
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, PasswordChangeForm, SetPasswordForm
@@ -178,3 +179,37 @@ class Timing_form(forms.ModelForm):
     class Meta:
         model = Timing
         fields = ('time',)
+
+class Employee_Holiday(forms.ModelForm):
+    date = forms.DateField(widget=DatePickerInput())
+    description = forms.Textarea()
+    
+    class Meta:
+        model = Holiday
+        fields = ('date','description','image')
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['date'].widget.attrs.update(
+            {'class':'form-control mb-3','placeholder': 'date',}
+        )
+        self.fields['description'].widget.attrs.update(
+            {'class':'form-control mb-3','placeholder': 'description'}
+        )
+        self.fields['image'].widget.attrs.update(
+            {'class':'form-control mb-3','placeholder': 'Image','required':False}
+        )
+
+
+class Leave_Status_Form(forms.ModelForm):
+
+    class Meta:
+       model = Holiday
+       fields = ['accepted', ]
+       widgets = {
+           'accepted': forms.Select(
+               attrs={
+                   'class': 'form-control',
+               }
+           ),
+       }

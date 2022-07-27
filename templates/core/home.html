@@ -1,7 +1,56 @@
 {% extends "core/core_base.html" %}
 {% load static %}
 {% block content %}
+<style>
 
+/* Testimonials  */
+.testimonials{
+    padding: 50px 0px 0px 0px;
+    color: black;
+}
+.testimonials h1{
+    font-size: 30px;
+    font-weight: 900;
+    text-align: center;
+}
+.testimonials-cards{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+.customer-comment{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.customer-comment img{
+    width: 50px;
+    height: 50px;
+    border-radius: 60%;
+}
+.customer-comment p{
+    font-size: 14px;
+    font-weight: 600;
+}
+.customer-comment h1{
+    font-size: 20px;
+    font-weight: 900;
+}
+.testimonials-cards .freelance-card{
+    padding-bottom: 10px;
+    border-radius: 10px;
+}
+@media (max-width: 768px) {
+.testimonials-cards{
+    grid-template-columns: repeat(1, 1fr);
+    padding-bottom: 20px;
+}
+.testimonials-cards > .freelance-card{
+    text-align: justify;
+}
+}
+/* Testimonials  */
+</style>
 
   <section class="header pt-5 mt-5" id="">
     <div class="container">
@@ -33,7 +82,55 @@
     </div>
   </section>
 
- 
+  <section class="testimonials mb-5">
+        <h1 class="title"> Testimonials</h1>
+        <br>
+        <p style="font-size: large; margin-bottom: 20px; text-align: center;color:rgb(16,49,120);">
+            Read what our customers say about us!</p>
+        <div class="testimonials-cards container">
+        {% for rate in rating %}
+        
+            <div class="freelance-card shadow p-4">
+                <div class="customer-comment">
+                {% if rate.author.image %}
+                    <img src="{{rate.author.image.url}}" alt="{{rate.author.first_name}}"/>
+                {% else %}
+                    <img src="https://traversymedia.com/images//testimonials/jorge.jpg" alt=""/>
+                {% endif %}
+                    <div>
+                        <h5 class="title">
+                            {{rate.author.first_name}} {{rate.author.last_name}}
+                        </h5>
+                        <p class="">
+                           <b class="text-color ">Services: </b> <span style="color:rgb(16,49,120);">
+                           {% for service in rate.appointment.package.services.all %}
+                           {{service.name}}
+                           {% endfor %}
+                           </span>
+                        </p>
+                        
+                    </div>
+                    <p style="margin-left:auto; align-self:start;" id="display_stars">
+                    <input type="hidden" id="rate" name="stars" value="{{rate.stars}}"></input>
+                    {% comment %} {% for star in rate.stars.count %} {% endcomment %}
+                    {% comment %} {{rate.stars}}
+                    <span style="color:orange; font-size:20px;" id="star">
+                        <i class="bi bi-star-fill"></i>
+                    </span> {% endcomment %}
+                    {% comment %} {% endfor %} {% endcomment %}
+                    </p>
+                </div>
+                <p class="text-secondary">
+                   {{rate.comment}}
+                </p>
+                <br>
+            </div>
+            
+        {% endfor %}
+            
+
+        </div>
+    </section>
 
 
 {% endblock content %}
