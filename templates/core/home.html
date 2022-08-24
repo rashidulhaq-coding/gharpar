@@ -1,136 +1,338 @@
-{% extends "core/core_base.html" %}
-{% load static %}
-{% block content %}
-<style>
+{% extends "core/core_base.html" %} {% load static %} {% block content %}
 
-/* Testimonials  */
-.testimonials{
-    padding: 50px 0px 0px 0px;
-    color: black;
-}
-.testimonials h1{
-    font-size: 30px;
-    font-weight: 900;
-    text-align: center;
-}
-.testimonials-cards{
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-}
-.customer-comment{
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-.customer-comment img{
-    width: 50px;
-    height: 50px;
-    border-radius: 60%;
-}
-.customer-comment p{
-    font-size: 14px;
-    font-weight: 600;
-}
-.customer-comment h1{
-    font-size: 20px;
-    font-weight: 900;
-}
-.testimonials-cards .freelance-card{
-    padding-bottom: 10px;
-    border-radius: 10px;
-}
-@media (max-width: 768px) {
-.testimonials-cards{
-    grid-template-columns: repeat(1, 1fr);
-    padding-bottom: 20px;
-}
-.testimonials-cards > .freelance-card{
-    text-align: justify;
-}
-}
-/* Testimonials  */
-</style>
+<main style="background-color: #ffffff">
+  <section class="container-fluid hero-section">
+    <div class="hero-left">
+      <p class="text-primary">ENJOY THE SOOTHING EXPERIENCE</p>
+      <h1>
+        ESSENCE <br />
+        OF NATURAL <br />
+        <span class="text-primary">BEAUTY</span>
+      </h1>
+      <p class="mt-2">
+        <a href="{% url 'services' %}" class="btn btn-primary text-white p-3"
+          >Book your Appointment Now</a
+        >
+      </p>
+    </div>
+    <div class="hero-right">
+      <!-- <img src="hero1.png" alt=""> -->
+    </div>
+  </section>
 
-  <section class="header pt-5 mt-5" id="">
-    <div class="container">
-      <div class="row align-left justify-content-center align-items-center">
+  <section class="container-fluid services">
+    <div class="service-img">
+      <img
+        src="https://media.istockphoto.com/photos/hipster-client-visiting-barber-shop-picture-id626416508?b=1&k=20&m=626416508&s=170667a&w=0&h=_14e0cWnpoNykaFvlfAM6RgaNA1oOiIxGHGUPQuW0ho="
+        alt=""
+      />
+    </div>
+    <div class="service-heading">
+      <span>HAIR</span> <br />
+      <span> CUTTING </span><br />
+      <span>PROFESSIONAL</span><br />
+      <hr />
+    </div>
 
-        <div class="col-12 col-md-12 col-lg-6">
-          <div class="text-wrapper">
-            <h1 class="mb-4 display-1 title"><strong>Welcome
-                to the<br>Gharpar</strong></h1>
-            <p class="mb-4 display-7 text-color">Beauty Salon in pakistan <br>
-              Where Beauty and Wellness Align</p>
-            <div class="mt-3">
-              <a href="#" class="btn btn-primary btn-lg display-4">Book Now</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-md-12 col-lg-6">
-          <img class="img-fluid rounded-2 "
-            src="https://images.unsplash.com/photo-1493256338651-d82f7acb2b38?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjB8fGJhcmJlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60"
-            alt="Mobirise">
-        </div>
+    <div class="service-heading">
+      <span>BEARD</span> <br />
+      <span> CUTTING </span><br />
+      <span>PROFESSIONAL</span><br />
+      <hr />
+    </div>
+    <div class="service-img">
+      <img
+        src="https://media.istockphoto.com/photos/touching-his-perfect-beard-picture-id518100449?b=1&k=20&m=518100449&s=170667a&w=0&h=6ydDchezhsp-hO80rWXETl0_TlEMT3YZode4J64dWOk="
+        alt=""
+      />
+    </div>
+    <div class="service-img">
+      <img
+        src="https://media.istockphoto.com/photos/halffaced-portrait-of-serious-concentrated-confident-brutal-chic-picture-id932956896?b=1&k=20&m=932956896&s=170667a&w=0&h=8o4BSJlzqkVbhuRVINRGJIpFdQF6L19r3sqFHpeS6KQ="
+        alt=""
+      />
+    </div>
+    <div class="service-heading">
+      <span>HAIR</span> <br />
+      <span> COLOR </span><br />
+      <span>PROFESSIONAL</span><br />
+      <hr />
+    </div>
+    <div class="service-img-third">
+      <img
+        src="https://media.istockphoto.com/photos/smiling-handsome-happy-cheerful-english-male-student-wearing-leather-picture-id480557232?b=1&k=20&m=480557232&s=170667a&w=0&h=0mIUuk13uZDpJ3BEdP7y1NupvmzFImTSQcipiEestzY="
+        alt=""
+      />
+    </div>
+  </section>
+  <br /><br />
+
+  <section class="container-fluid service-counter">
+    <div>
+      <i class="bi bi-scissors"></i>
+      <span>571</span>
+      <span>Hair Cutting</span>
+    </div>
+    <div>
+      <i class="bi bi-scissors"></i>
+      <span>571</span>
+      <span>Beard Cutting</span>
+    </div>
+    <div>
+      <i class="bi bi-brush"></i>
+      <span>571</span>
+      <span>Hair Coloring</span>
+    </div>
+  </section>
+
+  <br /><br />
+
+  <section class="container-fluid choose">
+    <div>
+      <span class="text-white font-size">WHY CHOOSE</span>
+      <br />
+      <span class="font-size-lg" style="color: #b79e6e"> OUR SALON </span>
+      <hr style="height: 2px; color: white; width: 60px; margin-top: 40px" />
+    </div>
+    <div>
+      <span class="choose-top">01.</span>
+
+      <span class="font-size">TOP OF THE LINE</span>
+      <br />
+      <span class="font-size-lg">PRODUCTS</span>
+      <span class="no-visible">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum amet
+        quo sint corporis voluptas ducimus illo optio assumenda a repellendus.
+      </span>
+    </div>
+    <div style="background-color: #d4cec1">
+      <span class="choose-top">02.</span>
+
+      <span class="font-size">TOP OF THE LINE</span>
+      <br />
+      <span class="font-size-lg">OF STYLISTS</span>
+      <span class="no-visible">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum amet
+        quo sint corporis voluptas ducimus illo optio assumenda a repellendus.
+      </span>
+    </div>
+    <div style="background-color: #ccbea5">
+      <span class="choose-top">03.</span>
+
+      <span class="font-size">SPECIAL GIFTS AND </span>
+      <br />
+      <span class="font-size-lg">OFFERS</span>
+      <span class="no-visible">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum amet
+        quo sint corporis voluptas ducimus illo optio assumenda a repellendus.
+      </span>
+    </div>
+  </section>
+
+  <section class="container-fluid customers">
+    <h2 class="font-size-lg text-center">Customer Reviews</h2>
+    <div
+      id="carouselExampleIndicators"
+      class="carousel slide"
+      data-bs-ride="carousel"
+    >
+      <div class="carousel-indicators">
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="0"
+          class="active"
+          aria-current="true"
+          aria-label="Slide 1"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="1"
+          aria-label="Slide 2"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="2"
+          aria-label="Slide 3"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="3"
+          aria-label="Slide 4"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="4"
+          aria-label="Slide 5"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="5"
+          aria-label="Slide 6"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="6"
+          aria-label="Slide 8"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="6"
+          aria-label="Slide 9"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="6"
+          aria-label="Slide 10"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="6"
+          aria-label="Slide 7"
+        ></button>
       </div>
-    </div>
-  </section>
-
-  <section class="hair">
-    <div class="container">
-
-    </div>
-  </section>
-
-  <section class="testimonials mb-5">
-        <h1 class="title"> Testimonials</h1>
-        <br>
-        <p style="font-size: large; margin-bottom: 20px; text-align: center;color:rgb(16,49,120);">
-            Read what our customers say about us!</p>
-        <div class="testimonials-cards container">
-        {% for rate in rating %}
-        
-            <div class="freelance-card shadow p-4">
+      <div class="carousel-inner">
+            <div class="carousel-item active">
+            <div class="p-4">
                 <div class="customer-comment">
-                {% if rate.author.image %}
-                    <img src="{{rate.author.image.url}}" alt="{{rate.author.first_name}}"/>
-                {% else %}
-                    <img src="https://traversymedia.com/images//testimonials/jorge.jpg" alt=""/>
-                {% endif %}
-                    <div>
-                        <h5 class="title">
-                            {{rate.author.first_name}} {{rate.author.last_name}}
-                        </h5>
-                        <p class="">
-                           <b class="text-color ">Services: </b> <span style="color:rgb(16,49,120);">
-                           {% for service in rate.appointment.package.services.all %}
-                           {{service.name}}
-                           {% endfor %}
-                           </span>
-                        </p>
-                        
-                    </div>
-                    <p style="margin-left:auto; align-self:start;" id="display_stars">
-                    <input type="hidden" id="rate" name="stars" value="{{rate.stars}}"></input>
-                    {% comment %} {% for star in rate.stars.count %} {% endcomment %}
-                    {% comment %} {{rate.stars}}
-                    <span style="color:orange; font-size:20px;" id="star">
+                <img
+                    src="https://traversymedia.com/images//testimonials/jorge.jpg"
+                    alt=""
+                />
+
+                <div class="text-center">
+                    <h5 class="title">John</h5>
+                    <p class="">
+                    <span style="color: rgb(16, 49, 120)">
+                        Shave, Beard Cut
+                    </span>
+                    </p>
+                    <p
+                    style="margin-left: auto; align-self: start"
+                    id="display_stars"
+                    >
+                    <span style="color: orange; font-size: 20px" id="star">
                         <i class="bi bi-star-fill"></i>
-                    </span> {% endcomment %}
-                    {% comment %} {% endfor %} {% endcomment %}
+                    </span>
+                    <span style="color: orange; font-size: 20px" id="star">
+                        <i class="bi bi-star-fill"></i>
+                    </span>
                     </p>
                 </div>
-                <p class="text-secondary">
-                   {{rate.comment}}
+                </div>
+                <p class="text-secondary text-center">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe
+                fugit atque sed consequuntur sit accusamus omnis asperiores magni?
+                Omnis, amet!
                 </p>
-                <br>
+                <br />
             </div>
-            
-        {% endfor %}
-            
+            </div>
 
+            {% for rate in rating %}    
+            <div class="carousel-item">
+            <div class="p-4">
+                <div class="customer-comment">
+                {% if rate.image %}
+                <img src="{{rate.image}}" alt="{{rate.name}}" />
+                {% else %}
+                <img
+                    src="https://traversymedia.com/images//testimonials/jorge.jpg"
+                    alt=""
+                />
+                {% endif %}
+                <div class="text-center">
+                    <h5 class="title">{{rate.name}}</h5>
+                    <p class="">
+                    <span style="color: rgb(16, 49, 120)">
+                        {% for service in rate.services %} {{service}} {% endfor %}
+                    </span>
+                    </p>
+                    <p
+                    style="margin-left: auto; align-self: start"
+                    id="display_stars"
+                    >
+                    {% for star in rate.stars%}
+                    <span style="color: orange; font-size: 20px" id="star">
+                        <i class="bi bi-star-fill"></i>
+                    </span>
+                    {% endfor %}
+                    </p>
+                </div>
+                </div>
+                <p class="text-secondary text-center">{{rate.comment}}</p>
+                <br />
+            </div>
+            </div>
+            {% endfor %}
         </div>
-    </section>
+      <button
+        class="carousel-control-prev"
+        type="button"
+        data-bs-target="#carouselExampleIndicators"
+        data-bs-slide="prev"
+      >
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button
+        class="carousel-control-next"
+        type="button"
+        data-bs-target="#carouselExampleIndicators"
+        data-bs-slide="next"
+      >
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </section>
 
+  <br /><br />
+  <section class="container-fluid choose">
+    <div>
+      <!-- <span class="text-white font-size"></span> -->
+      <br />
+      <span class="font-size-lg" style="color: #b79e6e"> GHARPAR </span>
+      <!-- <P style="font-size:16px;color: #FFFFFF;margin-top: 30px;">Pakistan first Salon providing the best online services.</P> -->
+      <hr style="height: 2px; color: white; width: 60px; margin-top: 40px" />
+    </div>
+    <div>
+      <span class="choose-top"><i class="bi bi-geo-alt"></i></span>
+      <span class="font-size-lg">ADDRESS</span>
+      <span class="mt-3 fs-6">
+        908 New Hampshire Avenue Northwest #100 Washington, DC, 20037, United
+        States
+      </span>
+      <br /><br />
+    </div>
+    <div style="background-color: #d4cec1">
+      <span class="choose-top"><i class="bi bi-telephone"></i></span>
+      <span class="font-size-lg">PHONES</span>
+      <span class="mt-3 fs-6">
+        Phone: +1 916-875-2235 <br />
+        Phone: +1 916-875-2235
+      </span>
+      <br /><br /><br />
+    </div>
+    <div style="background-color: #ccbea5">
+      <span class="choose-top"><i class="bi bi-clock"></i></span>
+      <span class="font-size-lg">TIMING</span>
+      <span class="mt-3 fs-6">
+        Monday-Friday: 9:00 – 18:00 <br />
+        Saturday: 11:00 – 17:00
+      </span>
+      <br /><br /><br />
+    </div>
+  </section>
+</main>
 
 {% endblock content %}

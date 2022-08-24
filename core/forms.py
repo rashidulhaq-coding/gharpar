@@ -116,22 +116,27 @@ class Package_Form(forms.ModelForm):
            'class': 'form-control',
          }
    ))
-   services=forms.ModelMultipleChoiceField(queryset=Service.objects.all(), widget=forms.SelectMultiple(
+   services = forms.ModelMultipleChoiceField(queryset=Service.objects.all(), widget=forms.SelectMultiple(
        attrs = {
            'placeholder':'Services',
            'class':'form-control',
          }
    ))
+   image = forms.ImageField(widget=forms.FileInput(attrs = {
+       'placeholder': 'Image',
+       'class': 'form-control',
+   }))
    discount = forms.CharField(widget=forms.TextInput(
        attrs= {
            'placeholder':'Discount',
            'class':'form-control',
          }
     ))
+   
    # Metadata
    class Meta:
        model = Package
-       fields = ['name', 'description','services','discount']
+       fields = ['name', 'description','services','image','discount']
        
 # appointment model form
 class Appointment_Form(forms.ModelForm):

@@ -1,11 +1,24 @@
 {% extends "core/core_base.html" %}
 {% load static %}
 {% block content %}
+<style>
+html {
+  scroll-behavior: smooth;
+}
+</style>
   <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
 
   <div class="carousel-wrap">
     <div class="owl-carousel">
+    
+    {% if packages %}
+      
+    <div class="item">
+        <a href="#package">Packages</a>
+      </div>
+    {% endif %}
+      
     {% for category in categories %}
     <div class="item">
         <a href="#{{category.name}}">{{category.name}}</a>
@@ -27,6 +40,43 @@
           {% endfor %}
           {% endif %}
       <div class="row g-3">
+      
+      {% if packages %}
+       <p class="fw-bold fs-5" id="package">Packages</p>
+          {% for s in packages %}
+        <div class="col-md-6">
+          <div class="card bg-white shadow-lg border-0">
+            <div class="card-body">
+            <div class=" d-flex justify-content-between">
+            
+              <div>
+               <h4 class="card-title fs-5">{{s}}</h4>
+              <p class="card-text p-y-1 text-black-50">Services: 
+              {% for service in s.services.all %}
+                {{service.name}},
+              {% endfor %}
+              </p>
+              <p class="card-text p-y-1 text-black-50">Duration: {{s.duration}}min</p>
+              <p class="card-text p-y-1 text-black-50">Price: ${{s.price}}</p>
+              </div>
+              <div>
+              
+              {% if s.image %}
+                
+              <img src="{{s.image.url}}" style="width: 300px; height:150px; object-fit:cover; border-radius:10px;"alt="{{s.description}}">
+              {% endif %}
+                
+              </div>
+             </div>
+              {% comment %} hiddent element with id of service {% endcomment %}
+              {% comment %} <input type="hidden" name="service_id" value="{{s.id}}"> {% endcomment %}
+              <a id="book_service" href="{% url 'booking_employee' s.id %}"  class="btn btn-outline-primary">Book</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      {% endif %}
+        
       {% for service in services %}
       {% if service.services %}
       <p class="fw-bold fs-5" id="{{service.category}}">{{service.category}}</p>
@@ -36,8 +86,21 @@
         <div class="col-md-6">
           <div class="card bg-white shadow-lg border-0">
             <div class="card-body">
-              <h4 class="card-title fs-5">{{s}}</h4>
-              <p class="card-text p-y-1 text-black-50">{{s.duration}}min ${{s.price}}</p>
+            <div class=" d-flex justify-content-between">
+            
+              <div>
+               <h4 class="card-title fs-5">{{s}}</h4>
+              <p class="card-text p-y-1 text-black-50">Duration: {{s.duration}}min</p>
+              <p class="card-text p-y-1 text-black-50">Price: ${{s.price}}</p>
+              </div>
+              <div>
+              {% if s.image %}
+                
+              <img src="{{s.image.url}}" style="width: 300px; height:150px; object-fit:cover; border-radius:10px;"alt="{{s.description}}">
+              {% endif %}
+                
+              </div>
+             </div>
               {% comment %} hiddent element with id of service {% endcomment %}
               {% comment %} <input type="hidden" name="service_id" value="{{s.id}}"> {% endcomment %}
               <a id="book_service" href="{% url 'book_service' s.id %}"  class="btn btn-outline-primary">Book</a>

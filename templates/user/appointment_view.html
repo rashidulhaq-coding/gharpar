@@ -33,9 +33,14 @@
             {% comment %} <td class="font-weight-bold">{{booking.service.name}} {{booking.package.name}}</td>
              {% endcomment %}
               <td>
+             {% if booking.package.name %}
+              {{booking.package.name}}
+            {% else %}
+           
             {% for service in booking.package.services.all %}
             {{service.name}}
             {% endfor %} 
+             {% endif %}
             </td>
             <td>{{booking.employee}}</td>
             <td>{{booking.date}}</td>
@@ -86,7 +91,16 @@
               </div>
             </td>
             <td>{{booking.customer.email}}<br></td>
-            <td class="font-weight-bold">{{booking.service.name}} {{booking.package.name}}</td>
+            <td class="font-weight-bold">
+             {% if booking.package.name %}
+              {{booking.package.name}}
+            {% else %}
+           
+            {% for service in booking.package.services.all %}
+            {{service.name}}
+            {% endfor %} 
+             {% endif %}
+            </td>
             <td>{{booking.employee}}</td>
             <td>{{booking.date}}</td>
             <td>
@@ -136,7 +150,14 @@
               </div>
             </td>
             <td>{{booking.customer.email}}<br></td>
-            <td class="font-weight-bold">{{booking.service.name}} {{booking.package.name}}</td>
+            <td class="font-weight-bold"> {% if booking.package.name %}
+              {{booking.package.name}}
+            {% else %}
+           
+            {% for service in booking.package.services.all %}
+            {{service.name}}
+            {% endfor %} 
+             {% endif %}</td>
             <td>{{booking.employee}}</td>
             <td>{{booking.date}}</td>
             <td>

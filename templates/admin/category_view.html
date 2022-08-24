@@ -8,7 +8,7 @@
         <div
           class="bg-image hover-overlay ripple ripple-surface ripple-surface-light"
           data-mdb-ripple-color="light">
-          {% comment %} <img src="{{category.image.url}}" class="img-fluid w-100" /> {% endcomment %}
+         <img src="{{category.image.url}}" class="img-fluid w-100" style="width:200px;height:200px;object-fit:cover;border-radius:5px;" />
           <a href="{% url 'admin_service_view' category.id %}">
             <div
               class="mask"

@@ -148,7 +148,8 @@ def create_service(request, pk):
 
 @only_admin
 def admin_package_view(request):
-    packages = Package.objects.all()
+    user = User.objects.filter(is_superuser=True)[0]
+    packages = Package.objects.filter(created_by=user)
     context = {
         'packages': packages
     }
@@ -163,6 +164,7 @@ def admin_package_create(request):
             package = form.save(commit=False)
             services = form.cleaned_data['services']
             discount = form.cleaned_data['discount']
+            image = form.cleaned_data['image']
             package.created_by = request.user
             # retrieve services from form
             duration = 0
@@ -173,7 +175,7 @@ def admin_package_create(request):
             package.duration = duration
             package.price = float(price) - (float(price)
                                             * float(discount) / 100)
-            package.image = services[0].image
+            package.image = image
             package.save()
             messages.success(request, 'Package created successfully')
             return redirect('admin_package_view')
@@ -192,6 +194,7 @@ def admin_package_edit(request, pk):
             services = form.cleaned_data['services']
             discount = form.cleaned_data['discount']
             # retrieve services from form
+            image = form.cleaned_data['image']
             duration = 0
             price = 0
             for service in services:
@@ -200,7 +203,7 @@ def admin_package_edit(request, pk):
             package.duration = duration
             package.price = float(price) - (float(price)
                                             * float(discount) / 100)
-            package.image = services[0].image
+            package.image = image
             package.save()
             messages.success(request, 'Package updated successfully')
             return redirect('admin_package_view')
@@ -473,31 +476,31 @@ def home_view(request):
     services = Service.objects.all()[:10]
     packages = Package.objects.all()[:10]
     categories = Category.objects.all()
-    review = Review.objects.all()[:10]
-    # rating_list = []
-    # for rating in review:
-    #     rate = []
-    #     services_list=[]
-    #     # for service in rating.appointment.package.services.all():
-    #     #     services_list.append(service.name)
-    #     services_list = [service.name for service in rating.appointment.package.services.all()]
-    #     l=[rating.author, services_list,
-    #          range(1,rating.stars), rating.comment]
-    #     rate.extend(l)
-    #     rating_list.append(rate)
-    # print(rating_list)
+    reviews = Review.objects.all()[:10]
+    
+    rating_list = []
+    for review in reviews:
+        name= review.author.first_name+" "+review.author.last_name
+        image = review.author.image.url
+        comment = review.comment
+        services = [service for service in review.appointment.package.services.all()]
+        stars = [i for i in range(review.stars)]
+        rate={'name':name,'comment':comment,'services':services,'stars':stars,'image':image}
+        rating_list.append(rate)
 
     context = {
         'services': services,
         'packages': packages,
         'categories': categories,
-        'rating': review,
+        'rating': rating_list,
     }
     return render(request, 'core/home.html', context)
 
 def services_view(request):
     categories = Category.objects.all()
-   
+    user = User.objects.filter(is_superuser=True)[0]
+    packages = Package.objects.filter(created_by=user)
+    print(packages)
     services=[]
     for category in categories:
         service = Service.objects.filter(category=category)
@@ -505,6 +508,7 @@ def services_view(request):
     context = {
         'categories': categories,
         'services': services,
+        'packages':packages,
     }
     return render(request, 'core/services.html', context)
 
