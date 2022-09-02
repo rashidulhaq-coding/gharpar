@@ -7,7 +7,7 @@
                   <a href="#" class="d-flex align-items-center flex-column">
                    
                     <h5 class="ml-2"> <span class="bi bi-box h5"></span> Total Appointments</h5>
-                    <h5 class="ml-2">{{appointments}}</h5>
+                    <h5 class="ml-2">{{appointments_count}}</h5>
 
                   </a>
                 </article>
@@ -31,16 +31,80 @@
                 </article>
               </div>
             </section>
+            <br>
+            
+            {% if order_by_employee %}
+              
+              
+            <h3 class="text-center my-3">Orders Completed by Stylists</h3>
+            <section class="row">
+            {% for employee in order_by_employee %}
+              <div class="col-md-6 col-lg-4">
+                <!-- card -->
+                <article class="p-4 rounded shadow-sm border-left mb-4">
+                  <a href="#" class="d-flex align-items-center flex-column">
+                   
+                    <h5 class="ml-2">{{employee.user.image.url}} {{employee.employee}}</h5>
+                    <h5 class="ml-2">{{employee.orders_completed}}</h5>
 
-            {% comment %} <div
-              class="jumbotron jumbotron-fluid rounded bg-white border-0 shadow-sm border-left px-4"
-            >
-              <div class="container">
-                <h1 class="display-4 mb-2 text-primary">Simple</h1>
-                <p class="lead text-muted">
-                  Simple Admin Dashboard with Bootstrap.
-                </p>
-              </div> 
-            </div> {% endcomment %}
+                  </a>
+                </article>
+              </div>
+              {% endfor %}
+            </section>
+            {% endif %}
+<h3 class="text-center my-3">Some Recent Appointments</h3>
+           <section class="row">
+            <div class="table-responsive">
+      <table class="table table-striped table-light table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Package / Services</th>
+            <th>Stylist</th>
+            <th>Date</th>
+            <th>Start time</th>
+            <th>End time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for booking in appointments %}
+          <tr>
+
+            <td>
+              <div class="d-flex align-items-center">
+                <span class="ml-2">{{booking.customer.first_name}} {{booking.customer.last_name}}</span>
+              </div>
+            </td>
+            <td>{{booking.customer.email}}<br></td>
+            {% comment %} <td class="font-weight-bold"> {{booking.package.services}} {% endcomment %}
+            <td>
+            
+            {% if booking.package.name %}
+              {{booking.package.name}}
+            {% else %}
+           
+            {% for service in booking.package.services.all %}
+            {{service.name}}
+            {% endfor %} 
+             {% endif %}
+              
+            </td>
+            <td>{{booking.employee}}</td>
+            <td>{{booking.date}}</td>
+            <td>
+            {{booking.start_time}}
+            </td>
+            <td>
+            {{booking.end_time}}
+            </td>
+            
+          </tr>
+          {% endfor %}
+
+        </tbody>
+      </table>
+           </section>
           </main>
 {%endblock%}

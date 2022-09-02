@@ -1,3 +1,5 @@
+from decimal import Decimal
+from unicodedata import name
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.utils import timezone
@@ -7,7 +9,11 @@ from django.contrib import messages
 from datetime import date, datetime, timedelta
 import datetime
 from django.core.mail import send_mail
-
+# from datetime import datetime, date
+from pyinvoice.models import InvoiceInfo, ServiceProviderInfo, ClientInfo, Item, Transaction
+from pyinvoice.templates import SimpleInvoice
+from django.http import FileResponse
+from django.conf import settings
 from .models import *
 from .forms import *
 from core.forms import Service_Form
@@ -16,6 +22,8 @@ from accounts.restrictions import *
 from accounts.forms import Timing_form, Employee_Holiday, Leave_Status_Form
 from accounts.models import *
 # Admin views
+
+
 @only_admin
 def admin_dashboard(request):
     appointments = Appointment.objects.all()
@@ -23,13 +31,24 @@ def admin_dashboard(request):
     confirmed = appointments.filter(status='Confirmed').count()
     completed = appointments.filter(status='Completed').count()
     canceled = appointments.filter(status='Canceled').count()
+    employees = Employee.objects.all()
+    order_by_employee = []
+    for employee in employees:
+        orders = Appointment.objects.filter(employee=employee)
+        bookings = {
+            'employee': employee,
+            "orders_completed": orders.count()
+        }
+        order_by_employee.append(bookings)
 
     context = {
-        'appointments': appointments.count(),
+        'appointments_count': appointments.count(),
+        'appointments': appointments[:10],
         'pending': pending,
         'confirmed': confirmed,
         'completed': completed,
         'canceled': canceled,
+        'order_by_employee': order_by_employee,
     }
     return render(request, 'admin/admin_dashboard.html', context)
 # creating category view
@@ -57,7 +76,7 @@ def admin_category_create(request):
             return redirect('admin_category_view')
     else:
         form = Category_Form()
-    return render(request, 'admin/create_service.html', {'form': form,'title':'Create Category'})
+    return render(request, 'admin/create_service.html', {'form': form, 'title': 'Create Category'})
 
 # category edit view
 
@@ -74,7 +93,7 @@ def admin_category_edit(request, pk):
             return redirect('admin_category_view')
     else:
         form = Category_Form(instance=category)
-    return render(request, 'admin/create_service.html', {'form': form,'title':'Edit Category'})
+    return render(request, 'admin/create_service.html', {'form': form, 'title': 'Edit Category'})
 
 # category delete view
 
@@ -110,11 +129,12 @@ def admin_service_edit(request, pk):
         if form.is_valid():
             service = form.save(commit=False)
             service.save()
-            messages.success(request, service.name+' service updated successfully')
+            messages.success(request, service.name +
+                             ' service updated successfully')
             return redirect('admin_service_view', service.category.pk)
     else:
         form = Service_Form(instance=service)
-    return render(request, 'admin/create_service.html', {'form': form,'title':'Edit Service'})
+    return render(request, 'admin/create_service.html', {'form': form, 'title': 'Edit Service'})
 
 # service delete view
 
@@ -139,11 +159,12 @@ def create_service(request, pk):
             service.created = timezone.now()
             service.category = category
             service.save()
-            messages.success(request, service.name+' service created successfully')
+            messages.success(request, service.name +
+                             ' service created successfully')
             return redirect('admin_service_view', pk=pk)
     else:
         form = Service_Form()
-    return render(request, 'admin/create_service.html', {'form': form,'title':'Create Service'})
+    return render(request, 'admin/create_service.html', {'form': form, 'title': 'Create Service'})
 
 
 @only_admin
@@ -181,7 +202,7 @@ def admin_package_create(request):
             return redirect('admin_package_view')
     else:
         form = Package_Form()
-    return render(request, 'admin/create_service.html', {'form': form ,'title':'Create Package'})
+    return render(request, 'admin/create_service.html', {'form': form, 'title': 'Create Package'})
 
 
 @only_admin
@@ -209,7 +230,7 @@ def admin_package_edit(request, pk):
             return redirect('admin_package_view')
     else:
         form = Package_Form(instance=package)
-    return render(request, 'admin/create_service.html', {'form': form,'title':'Edit Package'})
+    return render(request, 'admin/create_service.html', {'form': form, 'title': 'Edit Package'})
 
 
 @only_admin
@@ -227,7 +248,7 @@ def admin_package_delete(request, pk):
 @only_admin
 def admin_appoitments_list_view(request, name):
     appointments = Appointment.objects.all()
-    
+
     if name == 'pending':
         cancelled = appointments.filter(status='Cancelled')
         pending = appointments.filter(status='Pending')
@@ -241,6 +262,7 @@ def admin_appoitments_list_view(request, name):
             'confirmed': confirmed,
         }
     return render(request, 'admin/appointment_view.html', context)
+
 
 @only_admin
 def admin_appoitment_view(request):
@@ -275,7 +297,7 @@ def admin_appoitment_status(request, pk):
             return redirect('admin_appoitment_list_view', appointment.status)
     else:
         form = Appointment_Form(instance=appointment)
-    return render(request, 'admin/create_service.html', {'form': form,'title':'Change Status'})
+    return render(request, 'admin/create_service.html', {'form': form, 'title': 'Change Status'})
 
 
 @only_admin
@@ -348,13 +370,18 @@ def employee_timing_delete(request, pk):
         return redirect('employee_timing_view')
     return render(request, 'admin/delete_view.html', {'delete': timing.time_slot})
 
+
 def leave_request(request):
     today = datetime.datetime.today()
     last_30_days = datetime.datetime.now() - datetime.timedelta(days=30)
-    leaves = Holiday.objects.filter(holiday=False,accepted='Pending',date__gte=today)
-    rejected = Holiday.objects.filter(holiday=False,accepted='Rejected',date__gte=last_30_days)
-    accepted = Holiday.objects.filter(holiday=False,accepted='Accepted',date__gte=last_30_days)
-    pending = Holiday.objects.filter(holiday=False,accepted='Pending',date__gte=last_30_days)
+    leaves = Holiday.objects.filter(
+        holiday=False, accepted='Pending', date__gte=today)
+    rejected = Holiday.objects.filter(
+        holiday=False, accepted='Rejected', date__gte=last_30_days)
+    accepted = Holiday.objects.filter(
+        holiday=False, accepted='Accepted', date__gte=last_30_days)
+    pending = Holiday.objects.filter(
+        holiday=False, accepted='Pending', date__gte=last_30_days)
     context = {'holidays': leaves,
                'accepted': accepted,
                'rejected': rejected,
@@ -376,6 +403,7 @@ def leave_status(request, id):
         form = Leave_Status_Form(instance=leave)
     return render(request, 'admin/create_service.html', {'form': form, 'title': 'Change Status of Leave'})
 
+
 def leave_delete(request, id):
     leave = get_object_or_404(Holiday, uuid=id)
     if request.method == 'POST':
@@ -393,18 +421,21 @@ def employee_dashboard(request):
     confirmed = appointments.filter(status='Confirmed').count()
     completed = appointments.filter(status='Completed').count()
     canceled = appointments.filter(status='Canceled').count()
+    reviews = Review.objects.all()[:10]
     context = {
-        'appointments': appointments.count(),
+        'appointments': appointments,
+        'appointments_count': appointments.count(),
         'pending': pending,
         'confirmed': confirmed,
         'completed': completed,
         'canceled': canceled,
+        'reviews': reviews,
     }
     return render(request, 'admin/admin_dashboard.html', context)
 
 
 @only_employee
-def employee_appointment_view(request,name):
+def employee_appointment_view(request, name):
     appointments = Appointment.objects.filter(employee=request.user.employee)
     if name == 'pending':
         cancelled = appointments.filter(status='Cancelled')
@@ -422,13 +453,15 @@ def employee_appointment_view(request,name):
 
 # timing set up by employee
 
+
 def employee_holiday_view(request):
     user = request.user
-    
+
     if user.is_authenticated:
         if user.is_employee:
-            holidays = Holiday.objects.filter(created_by = user).order_by('-date')
-            context ={
+            holidays = Holiday.objects.filter(
+                created_by=user).order_by('-date')
+            context = {
                 'holidays': holidays,
             }
         elif user.is_superuser:
@@ -438,9 +471,8 @@ def employee_holiday_view(request):
                 'holidays': holidays,
             }
     else:
-        messages.error(request,'You do not have permission to view a holiday')
+        messages.error(request, 'You do not have permission to view a holiday')
     return render(request, 'employee/holiday.html', context)
-
 
 
 def create_leave(request):
@@ -449,9 +481,9 @@ def create_leave(request):
         form = Employee_Holiday(request.POST, request.FILES)
         if form.is_valid():
             date = form.cleaned_data['date']
-            description= form.cleaned_data['description']
+            description = form.cleaned_data['description']
             image = form.cleaned_data['image']
-            created_by =get_object_or_404(User, pk=request.user.id)
+            created_by = get_object_or_404(User, pk=request.user.id)
             holiday = False
             accepted = 'Pending'
             if user.is_superuser:
@@ -462,55 +494,53 @@ def create_leave(request):
                 messages.warning(request, "It already exists.")
                 return redirect('holiday_create')
             else:
-                Holiday.objects.create(created_by=created_by,date=date,holiday=holiday,description=description,accepted=accepted)
+                Holiday.objects.create(created_by=created_by, date=date,
+                                       holiday=holiday, description=description, accepted=accepted)
                 return redirect('holiday')
     else:
         form = Employee_Holiday()
-    
+
     return render(request, 'employee/create_holiday.html', {'form': form})
-            
 
 
 # user views
 def home_view(request):
-    services = Service.objects.all()[:10]
-    packages = Package.objects.all()[:10]
-    categories = Category.objects.all()
     reviews = Review.objects.all()[:10]
-    
+
     rating_list = []
     for review in reviews:
-        name= review.author.first_name+" "+review.author.last_name
+        name = review.author.first_name+" "+review.author.last_name
         image = review.author.image.url
         comment = review.comment
-        services = [service for service in review.appointment.package.services.all()]
+        services = [
+            service for service in review.appointment.package.services.all()]
         stars = [i for i in range(review.stars)]
-        rate={'name':name,'comment':comment,'services':services,'stars':stars,'image':image}
+        rate = {'name': name, 'comment': comment,
+                'services': services, 'stars': stars, 'image': image}
         rating_list.append(rate)
 
     context = {
-        'services': services,
-        'packages': packages,
-        'categories': categories,
         'rating': rating_list,
     }
     return render(request, 'core/home.html', context)
+
 
 def services_view(request):
     categories = Category.objects.all()
     user = User.objects.filter(is_superuser=True)[0]
     packages = Package.objects.filter(created_by=user)
     print(packages)
-    services=[]
+    services = []
     for category in categories:
         service = Service.objects.filter(category=category)
         services.append({'category': category, 'services': service})
     context = {
         'categories': categories,
         'services': services,
-        'packages':packages,
+        'packages': packages,
     }
     return render(request, 'core/services.html', context)
+
 
 def about_view(request):
     employees = Employee.objects.all()
@@ -519,6 +549,7 @@ def about_view(request):
     }
     return render(request, 'core/about.html', context)
 
+
 def contact_view(request):
     if request.method == 'POST':
         name = request.POST.get('name', None)
@@ -526,16 +557,17 @@ def contact_view(request):
         phone = request.POST.get('phone', None)
         msg = request.POST.get('msg', None)
         send_mail(
-                subject='Client Contact',
-                message="From "+name+"\n"+msg,
-                from_email=email,
-                recipient_list=['admin@gmail.com', ],
-                fail_silently=False,
+            subject='Client Contact',
+            message="From "+name+"\n"+msg,
+            from_email=email,
+            recipient_list=['admin@gmail.com', ],
+            fail_silently=False,
         )
-        messages.success(request,"Message sended successfully")
+        messages.success(request, "Message sended successfully")
         return redirect('about')
     else:
         return redirect('about')
+
 
 @only_user
 def service_booking_view(request, pk):
@@ -547,7 +579,7 @@ def service_booking_view(request, pk):
         messages.error(request, 'Service is already booked')
         return redirect('services')
     else:
-        order_service = OrderService.objects.create(user= user,service=service)
+        order_service = OrderService.objects.create(user=user, service=service)
         services_by_user = OrderService.objects.filter(user=request.user)
         messages.success(request, 'Service is booked')
         return redirect('services')
@@ -555,14 +587,15 @@ def service_booking_view(request, pk):
 
 @only_user
 def cart_view(request):
-    order_services = OrderService.objects.filter(user=request.user, ordered=False)
+    order_services = OrderService.objects.filter(
+        user=request.user, ordered=False)
     total_price = 0
     total_duration = 0
     for order_service in order_services:
         # calculate total price and time
-        total_price += order_service.service.price  
+        total_price += order_service.service.price
         total_duration += order_service.service.duration
-    
+
     return render(request, 'core/cart.html', {'order_services': order_services, 'total_price': total_price, 'total_duration': total_duration})
 
 
@@ -575,8 +608,9 @@ def cart_delete(request, pk):
 
 @only_user
 def booking_services(request):
-    order_services= OrderService.objects.filter(user=request.user, ordered=False)
-    
+    order_services = OrderService.objects.filter(
+        user=request.user, ordered=False)
+
     duration = 0
     price = 0
     for order in order_services:
@@ -621,7 +655,7 @@ def booking_employee(request, pk):
                               start_time=str(start_date), end_time=str(end_date))
         booking.save()
         messages.success(request, 'Booking is successful')
-        return redirect('cart')
+        return redirect('user_appoitment_view', 'pending')
     context = {
         'package': package.id,
         'employees': employees,
@@ -629,13 +663,60 @@ def booking_employee(request, pk):
     return render(request, 'core/booking_employee.html', context)
 
 
+def invoice(request, pk):
+    appointment = get_object_or_404(Appointment, pk=pk)
+    services = []
+    for service in appointment.package.services.all():
+        services.append([service.name,service.description, service.price])
+    file_name = f'invoice {appointment.id}.pdf'
+    path= str(settings.BASE_DIR)+file_name
+    doc = SimpleInvoice(path)
+    # Paid stamp, optional
+    doc.is_paid = False
+    doc.invoice_info = InvoiceInfo(
+        appointment.id, datetime.datetime.now(), datetime.datetime.now())  # Invoice info, optional
+    # Service Provider Info, optional
+    doc.service_provider_info = ServiceProviderInfo(
+        name='Gharpar',
+        street='Main Anbar road Swabi',
+        city='Anbar',
+        state='Kp',
+        country='Pakistan',
+        post_code='23560',
+        vat_tax_number='880982233'
+    )
+
+    # Client info, optional
+    doc.client_info = ClientInfo(name=appointment.customer.first_name+" "+appointment.customer.last_name, city="Anbar",
+                                country="pakistan", post_code="23560", email=appointment.customer)
+
+    # Add Item
+    for service in services:
+        doc.add_item(
+            Item(f'{service[0]}', f'{service[1]}', 1, service[2]))
+    # doc.add_item(Item('Item', 'Item desc', 3, '3.3'))
+
+    # Tax rate, optional
+    doc.set_item_tax_rate(0)  # 20%
+
+    # Transactions detail, optional
+    doc.add_transaction(Transaction('Manual', 111, datetime.datetime.now(), appointment.package.price))
+    # doc.add_transaction(Transaction('Stripe', 222, date.today(), 2))
+
+    # Optional
+    doc.set_bottom_tip(
+        "Email: gharpar@gmail.com<br />Don't hesitate to contact us for any questions.")
+    doc.finish()
+    return FileResponse(open(file_name, 'rb'), as_attachment=True)
+   
 # @only_user
+
 def validate_employee(request):
     username = request.POST.get('employee', None)
     holiday = Holiday.objects.all()
     holiday_dates = []
     for i in holiday:
-        date= i.date.strftime("%Y/%m/%d")
+        date = i.date.strftime("%Y/%m/%d")
         holiday_dates.append(date)
         # convert date to y/m/d format
     data = {
@@ -649,8 +730,9 @@ def validate_employee(request):
 def validate_date(request):
     date = request.POST.get('date', None)
     user = request.POST.get('employee', None)
-    holiday = Holiday.objects.filter(date=date).exists()
-    leave = Holiday.objects.filter(created_by=user,date=date,accepted='Accepted').exists()
+    holiday = Holiday.objects.filter(date=date, holiday=True).exists()
+    leave = Holiday.objects.filter(
+        created_by=user, date=date, accepted='Accepted').exists()
     dat = date.split('-')
     day = int(dat[2])
     date = dat[0]+'-'+dat[1]+'-'+str(day)
@@ -658,7 +740,7 @@ def validate_date(request):
         data = {
             'is_taken': True,
             'times': [],
-            'holiday':'holiday',
+            'holiday': 'holiday',
         }
         return JsonResponse(data)
     elif leave:
@@ -674,7 +756,7 @@ def validate_date(request):
         times = Timing.objects.all()
         available_times = []
         if appointments.exists():
-            
+
             for time in times:
                 for apointment in appointments:
                     if apointment.start_time == time.time_slot:
@@ -714,9 +796,9 @@ def user_dashboard(request):
 
 
 @only_user
-def user_appointments(request,name):
+def user_appointments(request, name):
     appointments = Appointment.objects.filter(customer=request.user)
-    
+
     if name == 'pending':
         cancelled = appointments.filter(status='Cancelled')
         pending = appointments.filter(status='Pending')
@@ -735,7 +817,7 @@ def user_appointments(request,name):
             'confirmed': confirmed,
         }
     return render(request, 'user/appointment_view.html', context)
-        
+
 
 @only_user
 def edit_booking(request, pk):
@@ -757,18 +839,19 @@ def edit_booking(request, pk):
 #         return redirect('user_dashboard')
 #     return render(request, 'core/user/cancel_booking.html', {'appointment': appointment})
 
+
 def rate(request, id):
     appointment = Appointment.objects.get(id=id)
     if Review.objects.filter(appointment=appointment).count() > 0:
-        review = get_object_or_404(Review,appointment=appointment)
+        review = get_object_or_404(Review, appointment=appointment)
         form = ReviewForm(request.POST, instance=review)
-        if form.is_valid():  
+        if form.is_valid():
             form.save()
             return redirect('user_appoitment_view', 'completed')
         form = ReviewForm(instance=review)
         context = {
-            "form":form,
-            "title":"Review",
+            "form": form,
+            "title": "Review",
         }
         return render(request, 'admin/create_service.html', context)
     else:
@@ -777,12 +860,13 @@ def rate(request, id):
             author = request.user
             stars = request.POST.get('stars')
             comment = request.POST.get('comment')
-            review = Review(author=author, stars = stars,  comment=comment , appointment=appointment)
+            review = Review(author=author, stars=stars,
+                            comment=comment, appointment=appointment)
             review.save()
-            return redirect('user_appoitment_view','completed')
+            return redirect('user_appoitment_view', 'completed')
         form = ReviewForm()
         context = {
-                "form":form,
-                "title":"Review",
-            }
-        return render(request, 'admin/create_service.html',context)
+            "form": form,
+            "title": "Review",
+        }
+        return render(request, 'admin/create_service.html', context)

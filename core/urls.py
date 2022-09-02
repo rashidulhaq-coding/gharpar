@@ -42,6 +42,7 @@ urlpatterns = [
     path('user/appoitment/<str:name>/',
          user_appointments, name='user_appoitment_view'),
     path('user/appointment/<int:pk>/',edit_booking, name='edit_booking'),
+    path('user/invoice/<int:pk>/', invoice, name='invoice'),
     path('rate/<int:id>', rate, name="rate"),
     
     
