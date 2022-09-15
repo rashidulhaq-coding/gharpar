@@ -17,7 +17,6 @@
             <th>Date</th>
             <th>Start time</th>
             <th>End time</th>
-            <th>Reciept</th>
             <th></th>
           </tr>
         </thead>
@@ -51,9 +50,7 @@
             <td>
             {{booking.end_time}}
             </td>
-            <td>
-            <a href="{% url 'invoice' booking.id %}"><i class="bi bi-download"></i></a>
-            </td>
+           
             <td>
               <a href="{% url 'edit_booking' booking.id %}">
                 <i class="bi bi-pencil-fill text-primary"></i>

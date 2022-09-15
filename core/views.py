@@ -506,7 +506,9 @@ def create_leave(request):
 # user views
 def home_view(request):
     reviews = Review.objects.all()[:10]
-
+    reviews_count = Review.objects.all().count()
+    pending = Appointment.objects.filter(status="Pending").count()
+    completed = Appointment.objects.filter(status="Completed").count()
     rating_list = []
     for review in reviews:
         name = review.author.first_name+" "+review.author.last_name
@@ -521,6 +523,9 @@ def home_view(request):
 
     context = {
         'rating': rating_list,
+        "pending": pending,
+        "completed": completed,
+        "reviews":reviews_count
     }
     return render(request, 'core/home.html', context)
 
@@ -558,16 +563,15 @@ def contact_view(request):
         msg = request.POST.get('msg', None)
         send_mail(
             subject='Client Contact',
-            message="From "+name+"\n"+msg,
+            message="From "+name+"\n"+"phone no\n"+phone+"\n"+msg,
             from_email=email,
             recipient_list=['admin@gmail.com', ],
             fail_silently=False,
         )
         messages.success(request, "Message sended successfully")
-        return redirect('about')
+        return redirect('contact')
     else:
-        return redirect('about')
-
+        return render(request,'core/contact.html')
 
 @only_user
 def service_booking_view(request, pk):
@@ -575,6 +579,9 @@ def service_booking_view(request, pk):
     user = request.user
     order_service = OrderService.objects.filter(
         user=user, service=service, ordered=False)
+    # if order_service.service.category==service.category:
+    #     messages.error(request, "A Service from the Same Category already exists.")
+    #     return redirect('services')
     if order_service.exists():
         messages.error(request, 'Service is already booked')
         return redirect('services')

@@ -4,9 +4,44 @@
 
     <div class="container pt-5 mt-5">
         <div class="py-5">
-            <div class="row mb-4">
+         <section class="choose">
+    <div>
+      <!-- <span class="text-white font-size"></span> -->
+      <br />
+      <span class="font-size-lg" style="color: #b79e6e"> GHARPAR </span>
+      <!-- <P style="font-size:16px;color: #FFFFFF;margin-top: 30px;">Pakistan first Salon providing the best online services.</P> -->
+      <hr style="height: 2px; color: white; width: 60px; margin-top: 40px" />
+    </div>
+    <div>
+      <span class="choose-top"><i class="bi bi-geo-alt"></i></span>
+      <span class="font-size-lg">ADDRESS</span>
+      <span class="mt-3 fs-6">
+        Main Anbar road Swabi Khyber Pakhtunkhwa Pakistan
+      </span>
+      <br /><br />
+    </div>
+    <div style="background-color: #d4cec1">
+      <span class="choose-top"><i class="bi bi-telephone"></i></span>
+      <span class="font-size-lg">PHONES</span>
+      <span class="mt-3 fs-6">
+        Phone: + 01 234 567 88 <br />
+        Phone:+ 01 234 567 89
+      </span>
+      <br /><br /><br />
+    </div>
+    <div style="background-color: #ccbea5">
+      <span class="choose-top"><i class="bi bi-clock"></i></span>
+      <span class="font-size-lg">TIMING</span>
+      <span class="mt-3 fs-6">
+        Monday-Friday: 9:00 – 18:00 <br />
+        Saturday: 11:00 – 17:00
+      </span>
+      <br /><br /><br />
+    </div>
+  </section>
+            <div class="row my-4">
                 <div class="col-lg-5">
-                    <h2 class="display-5 fw-bold">Our team</h2>
+                    <h2 class="display-5 fw-bold">Stylists</h2>
                 </div>
             </div>
             <div class="row ">
@@ -34,34 +69,5 @@
 
         </div>
     </div>
-<div class="container contact-form">
-            <div class="contact-image">
-                <img src="https://image.ibb.co/kUagtU/rocket_contact.png" alt="rocket_contact"/>
-            </div>
-            <form method="post" action="{% url 'contact' %}">
-            {% csrf_token %}
-                <h3>Drop Us a Message</h3>
-               <div class="row">
-                    <div class="col-md-6">
-                        <div class="my-2">
-                            <input type="text" name="name" class="form-control" placeholder="Your Name *" />
-                        </div>
-                        <div class="my-2">
-                            <input type="text" name="email" class="form-control" placeholder="Your Email *"/>
-                        </div>
-                        <div class="my-2">
-                            <input type="text" name="phone" class="form-control" placeholder="Your Phone Number *" />
-                        </div>
-                        <div class="my-2">
-                            <input type="submit" name="btnSubmit" class="btnContact bg-primary block w-100 p-2" value="Send Message" />
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <textarea name="msg" class="form-control my-2" placeholder="Your Message *" style="width: 100%; height: 170px;"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </form>
-</div>
+
 {% endblock %}

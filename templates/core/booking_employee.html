@@ -53,7 +53,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                 <div class="w-50 mx-auto my-5">
+                 <div class="w-50 mx-auto mt-5">
     <h1 class="text-center">Get an appointment</h1>
     <form method="post">
       {% csrf_token %}
@@ -66,7 +66,7 @@
           {% endfor %}
         </select>
       </div>
-
+      <br>
       <div class="form-group">
         <label for="id_date" id="date-label" class="d-none">Date</label>
         <input
@@ -78,10 +78,12 @@
         />
         <input type="hidden" id="date" name="date" />
       </div>
+      <br>
       <div class="form-group">
         <label for="id_time"  id="time-label" class="d-none">Time</label>
         <select class="form-control d-none" name="time" id="id_time"></select>
       </div>
+      <br>
       <button type="submit" class="btn btn-primary w-100 mt-2 d-none" id="book">book now</button>
     </form>
   </div>

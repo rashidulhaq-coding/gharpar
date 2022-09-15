@@ -1,0 +1,97 @@
+{% extends "core/core_base.html" %}
+{% load static %}
+{% block content %}
+<!--Section: Contact v.2-->
+   <div class="container pt-5 mt-5">
+    <div class="m-auto" style="width: 90%;">
+    {% if messages %}
+          {% for message in messages %}
+          <div
+            class="alert {{ message.tags }} alert-dismissible fade show"
+            role="alert"
+          >
+          {{ message| capfirst }}
+           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% endfor %}
+          {% endif %}
+        <div class="py-5">
+<section class="mb-4">
+
+    <!--Section heading-->
+    <h2 class="h1-responsive font-weight-bold text-center my-4">Contact us</h2>
+    <!--Section description-->
+    <p class="text-center w-responsive mx-auto mb-5">Do you have any questions? Please do not hesitate to contact us directly. Our team will come back to you within
+        a matter of hours to help you.</p>
+
+    <div class="row mx-auto">
+
+        <!--Grid column-->
+        <div class="col-md-10 mb-md-0 mb-5 mx-auto">
+            <form id="contact-form" name="contact-form" method="POST">
+            {% csrf_token %}
+                <!--Grid row-->
+                <div class="row">
+
+                    <!--Grid column-->
+                    <div class="col-md-6">
+                        <div class="md-form mb-0">
+                            <label for="name" class="">Your name</label>
+                            <input type="text" id="name" name="name" class="form-control">
+                        </div>
+                    </div>
+                    <!--Grid column-->
+
+                    <!--Grid column-->
+                    <div class="col-md-6">
+                        <div class="md-form mb-0">
+                            <label for="email" class="">Your email</label>
+                            <input type="text" id="email" name="email" class="form-control">
+                        </div>
+                    </div>
+                    <!--Grid column-->
+
+                </div>
+                <!--Grid row-->
+
+                <!--Grid row-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="md-form mb-0">
+                            <label for="subject" class="">Phone</label>
+                            <input type="number" id="subject" name="phone" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <!--Grid row-->
+
+                <!--Grid row-->
+                <div class="row">
+
+                    <!--Grid column-->
+                    <div class="col-md-12">
+
+                        <div class="md-form">
+                            <label for="message">Your message</label>
+                            <textarea type="text" id="message" name="msg" rows="2" class="form-control md-textarea"></textarea>
+                        </div>
+
+                    </div>
+                </div>
+                <!--Grid row-->
+
+            <div class="text-center text-md-left mt-2">
+                <button type="submit" class="btn btn-primary w-100">Send Message</button>
+            </div>
+
+            </form>
+            <div class="status"></div>
+        </div>
+ 
+
+</section>
+</div>
+</div>
+</div>
+
+{% endblock %}
