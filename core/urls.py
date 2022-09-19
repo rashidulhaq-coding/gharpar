@@ -29,6 +29,8 @@ urlpatterns = [
     path('appointment/<str:name>/', admin_appoitments_list_view, name='admin_appoitment_list_view'),
     path('appointment/status/<int:pk>/', admin_appoitment_status, name='admin_appoitment_status'),
     path('leaves/',leave_request, name='leaves'),
+    path('reviews/',review_list_view, name='reviews'),
+    
     
     
     path('booking/services', booking_services, name='booking_services'),

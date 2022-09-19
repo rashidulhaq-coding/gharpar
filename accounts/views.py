@@ -65,11 +65,11 @@ def activate(request,uidb64,token):
 
 def user_update(request):
     if request.method == 'POST':
-        user_form = UserEditForm(request.POST, instance=request.user)
+        user_form = UserEditForm(request.POST, request.FILES, instance=request.user)
         if user_form.is_valid():
             user_form.save()
             messages.success(request, f'Your account has been updated!')
-            return redirect('accounts:user_update')
+            return redirect('user_update')
     else:
         user_form = UserEditForm(instance=request.user)
     return render(request, 'admin/create_service.html', {'form': user_form,'title':'Update User'})

@@ -17,7 +17,8 @@
             <th>Date</th>
             <th>Start time</th>
             <th>End time</th>
-            <th></th>
+            <th>Price</th>
+            <th>Edit</th>
           </tr>
         </thead>
         <tbody>
@@ -42,7 +43,7 @@
             {% endfor %} 
              {% endif %}
             </td>
-            <td>{{booking.employee}}</td>
+            <td>{{booking.employee | title}}</td>
             <td>{{booking.date}}</td>
             <td>
             {{booking.start_time}}
@@ -50,7 +51,10 @@
             <td>
             {{booking.end_time}}
             </td>
-           
+            <td>
+              
+            {{booking.package.price}}
+            </td>
             <td>
               <a href="{% url 'edit_booking' booking.id %}">
                 <i class="bi bi-pencil-fill text-primary"></i>
@@ -79,6 +83,7 @@
             <th>Date</th>
             <th>Start time</th>
             <th>End time</th>
+            <th>Price</th>
             <th></th>
           </tr>
         </thead>
@@ -102,13 +107,17 @@
             {% endfor %} 
              {% endif %}
             </td>
-            <td>{{booking.employee}}</td>
+            <td>{{booking.employee|title  }}</td>
             <td>{{booking.date}}</td>
             <td>
             {{booking.start_time}}
             </td>
             <td>
             {{booking.end_time}}
+            </td>
+            <td>
+             
+            {{booking.package.price}}
             </td>
             <td>
               <a href="">
@@ -139,6 +148,8 @@
             <th>Date</th>
             <th>Start time</th>
             <th>End time</th>
+            <th>Price</th>
+
           </tr>
         </thead>
         <tbody>
@@ -159,7 +170,7 @@
             {{service.name}}
             {% endfor %} 
              {% endif %}</td>
-            <td>{{booking.employee}}</td>
+            <td>{{booking.employee | title}}</td>
             <td>{{booking.date}}</td>
             <td>
             {{booking.start_time}}
@@ -167,7 +178,10 @@
             <td>
             {{booking.end_time}}
             </td>
-           
+            <td>
+              
+            {{booking.package.price}}
+            </td>
           </tr>
           {% endfor %}
 
@@ -190,6 +204,7 @@
             <th>Date</th>
             <th>Start time</th>
             <th>End time</th>
+            <th>Price</th>
             <th>Review</th>
           </tr>
         </thead>
@@ -203,18 +218,25 @@
               </div>
             </td>
             <td>{{booking.customer.email}}<br></td>
-            <td>
+            <td class="font-weight-bold"> {% if booking.package.name %}
+              {{booking.package.name}}
+            {% else %}
+           
             {% for service in booking.package.services.all %}
             {{service.name}}
             {% endfor %} 
-            </td>
-            <td>{{booking.employee}}</td>
+             {% endif %}</td>
+            <td>{{booking.employee | title}}</td>
             <td>{{booking.date}}</td>
             <td>
             {{booking.start_time}}
             </td>
             <td>
             {{booking.end_time}}
+            </td>
+             <td>
+              
+            {{booking.package.price}}
             </td>
             <td>
             <a href="{% url 'rate' booking.id %}">

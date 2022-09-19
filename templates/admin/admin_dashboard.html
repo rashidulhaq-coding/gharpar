@@ -66,6 +66,7 @@
             <th>Date</th>
             <th>Start time</th>
             <th>End time</th>
+            <th>Price</th>
           </tr>
         </thead>
         <tbody>
@@ -99,7 +100,9 @@
             <td>
             {{booking.end_time}}
             </td>
-            
+            <td>
+            {{booking.package.price}}
+            </td>
           </tr>
           {% endfor %}
 

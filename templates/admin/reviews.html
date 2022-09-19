@@ -1,0 +1,51 @@
+{% extends "partials/base.html" %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'home.css' %}">
+<main class="container-fluid">
+    <h2>Recent Reviews</h2>
+    <section class="row mx-auto">
+    {% for review in reviews %}
+        
+        
+    <div class="col-md-5 col-lg-5">
+    <div class="freelance-card">
+                <div class="customer-comment">
+                
+                {% if review.author.image %}
+                    <img src="{{review.author.image.url}}" height=100 width=100 alt="" style="border-radius:100px;">
+                    
+                {% endif %}
+                    
+                    <div>
+                        <h3>
+                            {{review.author.first_name|capfirst}}
+                            {{review.author.last_name|capfirst}}
+                        </h3>
+                        <p>
+                            Services: <span class="blue"> 
+                             {% for service in review.appointment.package.services.all %}
+            {{service.name}}
+            {% endfor %}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <p>
+                {{review.comment}}
+                </p>
+                <br>
+                
+                {% if request.user.is_superuser %}
+                
+                {%else%}
+                Edit
+                    <a href="{% url 'rate' review.appointment.id %}">
+                <i class="bi bi-pencil-fill text-primary"></i>
+            </a>
+                {% endif %}
+    </div>
+    </div>
+       
+    {% endfor %}
+    </section>
+</main>
+{% endblock %}

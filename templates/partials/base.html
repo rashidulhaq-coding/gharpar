@@ -105,10 +105,22 @@
                 <a
                   href="{% url 'admin_appoitment_list_view' 'confirmed' %}"
                   class="list-group-item list-group-item-action border-0 pl-5"
-                  >Confirmed Orders</a
+                  >Confirmed Appointements</a
+                >
+                <a
+                  href="{% url 'admin_appoitment_list_view' 'completed' %}"
+                  class="list-group-item list-group-item-action border-0 pl-5"
+                  >Completed Appointements</a
                 >
               </div>
             </div>
+            <a
+              href="{% url 'reviews' %}"
+              class="list-group-item list-group-item-action border-0 d-flex align-items-center"
+            >
+              <span class="bi bi-pencil"></span>
+              <span class="ml-2">Reviews</span>
+            </a>
           </div>
           {% elif request.user.is_employee %}
           <div class="list-group rounded-0">
@@ -194,6 +206,13 @@
                 >
               </div>
             </div>
+            <a
+              href="{% url 'reviews' %}"
+              class="list-group-item list-group-item-action border-0 d-flex align-items-center"
+            >
+              <span class="bi bi-pencil"></span>
+              <span class="ml-2">Reviews</span>
+            </a>
           </div>
             
           {% endif %}

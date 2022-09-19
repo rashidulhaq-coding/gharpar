@@ -7,7 +7,7 @@
                   <a href="#" class="d-flex align-items-center flex-column">
                    
                     <h5 class="ml-2"> <span class="bi bi-box h5"></span> Total Appointments</h5>
-                    <h5 class="ml-2">{{appointments}}</h5>
+                    <h5 class="ml-2">{{appointments_count}}</h5>
 
                   </a>
                 </article>
@@ -31,7 +31,7 @@
                 </article>
               </div>
             </section>
-
+<br><br><br>
             {% comment %} <div
               class="jumbotron jumbotron-fluid rounded bg-white border-0 shadow-sm border-left px-4"
             >
@@ -42,5 +42,64 @@
                 </p>
               </div> 
             </div> {% endcomment %}
+
+            <h4><a href="">Recent Appointments</a></h4>
+    <div class="table-responsive">
+      <table class="table table-striped table-light table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Package / Services</th>
+            <th>Stylist</th>
+            <th>Date</th>
+            <th>Start time</th>
+            <th>End time</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for booking in appointments %}
+          <tr>
+
+            <td>
+              <div class="d-flex align-items-center">
+                <span class="ml-2">{{booking.customer.first_name}} {{booking.customer.last_name}}</span>
+              </div>
+            </td>
+            <td>{{booking.customer.email}}<br></td>
+            {% comment %} <td class="font-weight-bold">{{booking.service.name}} {{booking.package.name}}</td>
+             {% endcomment %}
+              <td>
+             {% if booking.package.name %}
+              {{booking.package.name}}
+            {% else %}
+           
+            {% for service in booking.package.services.all %}
+            {{service.name}}
+            {% endfor %} 
+             {% endif %}
+            </td>
+            <td>{{booking.employee | title}}</td>
+            <td>{{booking.date}}</td>
+            <td>
+            {{booking.start_time}}
+            </td>
+            <td>
+            {{booking.end_time}}
+            </td>
+           
+            <td>
+              
+            {{booking.package.price}}
+            </td>
+          </tr>
+          {% endfor %}
+
+        </tbody>
+      </table>
+
+      
+    </div>
           </main>
 {%endblock%}

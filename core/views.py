@@ -256,6 +256,11 @@ def admin_appoitments_list_view(request, name):
             'cancelled': cancelled,
             'pending': pending,
         }
+    elif name=='completed':
+        completed = appointments.filter(status='Completed')
+        context = {
+            'completed': completed,
+        }
     else:
         confirmed = appointments.filter(status='Confirmed')
         context = {
@@ -799,7 +804,7 @@ def user_dashboard(request):
     completed = appointments.filter(status='Completed').count()
     confirmed = appointments.filter(status='Confirmed').count()
 
-    return render(request, 'user/user_dashboard.html', {'appointments': appointments.count(), 'pending': pending, 'completed': completed, 'confirmed': confirmed})
+    return render(request, 'user/user_dashboard.html', {'appointments_count': appointments.count(), 'pending': pending, 'completed': completed, 'confirmed': confirmed,'appointments': appointments[:5]})
 
 
 @only_user
@@ -877,3 +882,18 @@ def rate(request, id):
             "title": "Review",
         }
         return render(request, 'admin/create_service.html', context)
+
+def review_list_view(request):
+    context ={}
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            reviews = Review.objects.all()[:10]
+            context = {'reviews':reviews}
+        else:
+            reviews = Review.objects.filter(author=request.user)[:10]
+            context={
+                'reviews': reviews
+            }
+    else:
+        return redirect(request.META['HTTP_REFERER'])
+    return render(request, 'admin/reviews.html', context)
